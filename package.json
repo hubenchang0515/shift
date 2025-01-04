@@ -19,7 +19,8 @@
     "gh-pages": "^6.3.0",
     "highlight.js": "^11.11.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "react-github-btn": "^1.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

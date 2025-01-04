@@ -3,6 +3,7 @@ import { Box } from '@mui/material'
 import HighlightEditor from './components/HighlightEditor'
 import { Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
+import GitHubButton from 'react-github-btn'
 
 // @ts-ignore
 import Module from './lua/lua.js';
@@ -93,6 +94,9 @@ function App() {
         >
             <HighlightEditor ref={editRef} language='lua' sx={{position:'relative', overflow:'auto', flexGrow:1, flexShrink: 1}} onChange={(text)=>setCode(text)}/>
             <div ref={termDivRef}></div>
+            <Box sx={{position:'fixed', top:0, right:0, zIndex:20}}>
+                <GitHubButton href="https://github.com/hubenchang0515/lua-online" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Star hubenchang0515/lua-online on GitHub">Star</GitHubButton>
+            </Box>
         </Box>
     )
 }
