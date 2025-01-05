@@ -14,6 +14,23 @@ function App() {
     const termRef = useRef<Terminal>();
     const [code, setCode] = useState<string>("");
 
+    useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const base64Code = params.get("code");
+
+        if (base64Code) {
+            setCode(atob(base64Code));
+        }
+    }, []);
+
+    const share = useCallback(() => {
+        const url = new URL(window.location.href);
+        if (code) {
+            url.searchParams.set("code", btoa(code));
+        }
+        navigator.clipboard.writeText(url.toString());
+    }, [code]);
+
     const writeTerm = useCallback((asciiCode:any) => {
         switch (asciiCode) {
             case 10: termRef.current?.write('\r\n'); break;
@@ -91,10 +108,13 @@ function App() {
                 flexDirection: 'column',
             }}
         >
-            <HighlightEditor ref={editRef} language='lua' sx={{position:'relative', overflow:'auto', flex:1}} onChange={(text)=>setCode(text)}/>
+            <HighlightEditor ref={editRef} language='lua' sx={{position:'relative', overflow:'auto', flex:1}} text={code} onChange={(text)=>setCode(text)}/>
             <div ref={termDivRef}></div>
             <Box sx={{position:'fixed', bottom:8, right:8, zIndex:20, display:'flex', flexDirection:'column', gap:1}}>
                 <GitHubButton href="https://github.com/hubenchang0515/lua-online" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Star hubenchang0515/lua-online on GitHub">Star</GitHubButton>
+                <Tooltip title="Ctrl + L" arrow placement='left'>
+                    <Button size='small' variant='contained' color='inherit' onClick={share}>SHARE</Button>
+                </Tooltip>
                 <Tooltip title="Ctrl + L" arrow placement='left'>
                     <Button size='small' variant='contained' color='secondary' onClick={()=>{termRef.current?.reset();}}>CLEAR</Button>
                 </Tooltip>
