@@ -1,5 +1,5 @@
 {
-  "name": "lua-online",
+  "name": "interpreter-online",
   "private": true,
   "version": "0.0.0",
   "type": "module",

@@ -1,5 +1,5 @@
-# Lua Online
+# Interpreter Online
 
-Edit and run Lua script online - 在线编辑和运行 Lua 脚本
+Edit and run code script online - 在线编辑和运行代码脚本
 
 ![preview](./preview.png)
