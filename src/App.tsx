@@ -42,7 +42,7 @@ function App() {
         }
 
         if (base64Code) {
-            setCode(atob(base64Code));
+            setCode(decodeURIComponent(atob(base64Code)));
         }
     }, []);
 
@@ -50,7 +50,7 @@ function App() {
         const url = new URL(window.location.href);
         url.searchParams.set("lang", language);
         if (code) {
-            url.searchParams.set("code", btoa(code));
+            url.searchParams.set("code", btoa(encodeURIComponent(code)));
         }
         navigator.clipboard.writeText(url.toString());
     }, [language, code]);
