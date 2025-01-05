@@ -44,26 +44,21 @@ function App() {
                 module.FS.init(stdin, stdout, stderr);
             }
         });
-    }, [writeTerm]);
+    }, [code, writeTerm]);
 
     useEffect(() => {
-        console.log("Effect");
-        if (!termDivRef.current || !editRef.current) {
+        if (!termDivRef.current || termRef.current) {
             return;
         }
 
         // 初始化 xterm
-        termRef.current = new Terminal();
+        termRef.current = new Terminal({convertEol: true});
         termRef.current?.open(termDivRef.current);
+        termRef.current.resize(Math.floor(termDivRef.current.clientWidth/9),  15);
 
         // 打印 Lua 版本
         execute(["-v"]);
-
-        return () => {
-            termRef.current?.dispose();
-            termRef.current = undefined;
-        }
-    }, [editRef.current, termDivRef.current]);
+    }, [termDivRef.current]);
 
     const onKey = useCallback((event:KeyboardEvent) => {
         if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -76,7 +71,7 @@ function App() {
             termRef.current?.reset();
         }
         
-    }, [code]);
+    }, [execute]);
 
     useEffect(() => {
         // 绑定按键事件
@@ -96,7 +91,7 @@ function App() {
                 flexDirection: 'column',
             }}
         >
-            <HighlightEditor ref={editRef} language='lua' sx={{position:'relative', overflow:'auto', flexGrow:1, flexShrink: 1}} onChange={(text)=>setCode(text)}/>
+            <HighlightEditor ref={editRef} language='lua' sx={{position:'relative', overflow:'auto', flex:1}} onChange={(text)=>setCode(text)}/>
             <div ref={termDivRef}></div>
             <Box sx={{position:'fixed', bottom:8, right:8, zIndex:20, display:'flex', flexDirection:'column', gap:1}}>
                 <GitHubButton href="https://github.com/hubenchang0515/lua-online" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Star hubenchang0515/lua-online on GitHub">Star</GitHubButton>
