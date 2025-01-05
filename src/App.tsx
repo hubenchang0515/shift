@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Box } from '@mui/material'
+import { Box, Button, Tooltip } from '@mui/material'
 import HighlightEditor from './components/HighlightEditor'
 import { Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
@@ -14,16 +14,16 @@ function App() {
     const termRef = useRef<Terminal>();
     const [code, setCode] = useState<string>("");
 
-    const writeTerm = (asciiCode:any) => {
+    const writeTerm = useCallback((asciiCode:any) => {
         switch (asciiCode) {
             case 10: termRef.current?.write('\r\n'); break;
             case 13: termRef.current?.write('\r\n'); break;
             case 127: termRef.current?.write('\b \b'); break;
             default: termRef.current?.write(String.fromCharCode(asciiCode));
         }
-    }
+    }, [termRef.current]);
 
-    const execute = (args:any[]) => {
+    const execute = useCallback((args:any[]) => {
         Module({
             arguments: args,
             preRun: function(module:any) {
@@ -44,7 +44,7 @@ function App() {
                 module.FS.init(stdin, stdout, stderr);
             }
         });
-    }
+    }, [writeTerm]);
 
     useEffect(() => {
         console.log("Effect");
@@ -57,7 +57,7 @@ function App() {
         termRef.current?.open(termDivRef.current);
 
         // 打印 Lua 版本
-        execute(["-v", "-e", "print('Press <Ctrl> + <S> to run')"]);
+        execute(["-v"]);
 
         return () => {
             termRef.current?.dispose();
@@ -65,23 +65,27 @@ function App() {
         }
     }, [editRef.current, termDivRef.current]);
 
-    const run = useCallback((event:KeyboardEvent) => {
+    const onKey = useCallback((event:KeyboardEvent) => {
         if ((event.ctrlKey || event.metaKey) && event.key === 's') {
             event.preventDefault();
-            termRef.current?.reset();
             execute(["/tmp/main.lua"]);
+        }
+
+        if ((event.ctrlKey || event.metaKey) && event.key === 'l') {
+            event.preventDefault();
+            termRef.current?.reset();
         }
         
     }, [code]);
 
     useEffect(() => {
         // 绑定按键事件
-        document.addEventListener("keydown", run);
+        document.addEventListener("keydown", onKey);
 
         return () => {
-            document.removeEventListener("keydown", run);
+            document.removeEventListener("keydown", onKey);
         }
-    }, [run]);
+    }, [onKey]);
 
     return (
         <Box
@@ -94,8 +98,14 @@ function App() {
         >
             <HighlightEditor ref={editRef} language='lua' sx={{position:'relative', overflow:'auto', flexGrow:1, flexShrink: 1}} onChange={(text)=>setCode(text)}/>
             <div ref={termDivRef}></div>
-            <Box sx={{position:'fixed', top:0, right:0, zIndex:20}}>
+            <Box sx={{position:'fixed', bottom:8, right:8, zIndex:20, display:'flex', flexDirection:'column', gap:1}}>
                 <GitHubButton href="https://github.com/hubenchang0515/lua-online" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Star hubenchang0515/lua-online on GitHub">Star</GitHubButton>
+                <Tooltip title="Ctrl + L" arrow placement='left'>
+                    <Button size='small' variant='contained' color='secondary' onClick={()=>{termRef.current?.reset();}}>CLEAR</Button>
+                </Tooltip>
+                <Tooltip title="Ctrl + S"arrow placement='left'>
+                    <Button size='small' variant='contained' onClick={()=>{execute(["/tmp/main.lua"]);}}>RUN</Button>
+                </Tooltip>
             </Box>
         </Box>
     )
