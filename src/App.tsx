@@ -158,9 +158,7 @@ function App() {
                     </Select>
                 </FormControl>
                 </Paper>
-                <Tooltip title="Ctrl + L" arrow placement='left'>
-                    <Button size='small' variant='contained' color='inherit' onClick={share}>SHARE</Button>
-                </Tooltip>
+                <Button size='small' variant='contained' color='inherit' onClick={share}>SHARE</Button>
                 <Tooltip title="Ctrl + L" arrow placement='left'>
                     <Button size='small' variant='contained' color='secondary' onClick={()=>{termRef.current?.reset();}}>CLEAR</Button>
                 </Tooltip>
