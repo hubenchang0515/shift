@@ -9,8 +9,16 @@ import GitHubButton from 'react-github-btn'
 import lua from './wasm/lua.js';
 // @ts-ignore
 import picoc from './wasm/picoc.js';
+// @ts-ignore
+import python from './wasm/python.js';
 
 const LANGUAGES = [
+    {
+        name: "python",
+        label: "Python",
+        interpreter: python,
+    },
+
     {
         name: "lua",
         label: "Lua",
@@ -29,7 +37,7 @@ function App() {
     const termDivRef = useRef<HTMLDivElement>(null);
     const termRef = useRef<Terminal>();
 
-    const [language, setLanguage] = useState<string>("c");
+    const [language, setLanguage] = useState<string>("python");
     const [code, setCode] = useState<string>("");
 
     useEffect(() => {
@@ -65,7 +73,6 @@ function App() {
     }, [termRef.current]);
 
     const execute = useCallback((args:any[]) => {
-        console.log(language)
         let interpreter = null;
         for (const lang of LANGUAGES) {
             if (lang.name === language) {
@@ -75,7 +82,7 @@ function App() {
         }
         interpreter({
             arguments: args,
-            preRun: function(module:any) {
+            preRun: [function(module:any) {
                 module.FS.writeFile(`/tmp/code`, code);
 
                 function stdin() {
@@ -91,7 +98,7 @@ function App() {
                 }
 
                 module.FS.init(stdin, stdout, stderr);
-            }
+            }]
         });
     }, [language, code, writeTerm]);
 
