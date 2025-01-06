@@ -142,7 +142,7 @@ function App() {
             <HighlightEditor ref={editRef} language={language} sx={{position:'relative', overflow:'auto', flex:1}} text={code} onChange={(text)=>setCode(text)}/>
             <div ref={termDivRef}></div>
             <Box sx={{position:'fixed', bottom:8, right:16, zIndex:20, display:'flex', flexDirection:'column', gap:1}}>
-                <GitHubButton href="https://github.com/hubenchang0515/interpreter-online" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Star hubenchang0515/interpreter-online on GitHub">Star</GitHubButton>
+                <GitHubButton href="https://github.com/hubenchang0515/shift" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Star hubenchang0515/shift on GitHub">Star</GitHubButton>
                 <Paper>
                 <FormControl fullWidth variant="standard">
                     <Select
