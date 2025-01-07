@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       manifest: {
-        name: 'Shift - Online Code Interpreter',
-        short_name: 'Shift - Online Code Interpreter',
+        name: 'Shift',
+        short_name: 'Shift',
         description: 'Edit and run code script online - 在线编辑和运行代码脚本',
         theme_color: '#ffffff',
         icons: [
@@ -33,7 +33,7 @@ export default defineConfig({
         enabled: true,
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 16 * 1024 ** 2, // 5 MB or set to something else
+        maximumFileSizeToCacheInBytes: 16 * 1024 ** 2, // 16 MB or set to something else
       }
     }),
   ],
