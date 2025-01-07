@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Box, Button, FormControl, MenuItem, Paper, Select, Tooltip } from '@mui/material'
+import { Box, Button, Collapse, FormControl, IconButton, MenuItem, Paper, Select, Tooltip } from '@mui/material'
 import HighlightEditor from './components/HighlightEditor'
 import { Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
+import { FitAddon } from '@xterm/addon-fit';
 import GitHubButton from 'react-github-btn'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 // @ts-ignore
 import lua from './wasm/lua.js';
@@ -39,20 +42,7 @@ function App() {
 
     const [language, setLanguage] = useState<string>("python");
     const [code, setCode] = useState<string>("");
-
-    useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const lang = params.get("lang");
-        const base64Code = params.get("code");
-
-        if (lang) {
-            setLanguage(lang);
-        }
-
-        if (base64Code) {
-            setCode(decodeURIComponent(atob(base64Code)));
-        }
-    }, []);
+    const [open, setOpen] = useState(true);
 
     const share = useCallback(() => {
         const url = new URL(window.location.href);
@@ -103,16 +93,33 @@ function App() {
     }, [language, code, writeTerm]);
 
     useEffect(() => {
+        const params = new URLSearchParams(window.location.search);
+        const lang = params.get("lang");
+        const base64Code = params.get("code");
+
+        if (lang) {
+            setLanguage(lang);
+        }
+
+        if (base64Code) {
+            setCode(decodeURIComponent(atob(base64Code)));
+            execute(["/tmp/code"]);
+        }
+    }, [writeTerm]);
+
+    useEffect(() => {
         if (!termDivRef.current || termRef.current) {
             return;
         }
 
         // 初始化 xterm
         termRef.current = new Terminal({convertEol: true});
-        termRef.current?.open(termDivRef.current);
-        termRef.current.resize(Math.floor(termDivRef.current.clientWidth/9),  15);
+        const fitAddon = new FitAddon();
+        termRef.current.loadAddon(fitAddon);
+        termRef.current.open(termDivRef.current);
+        fitAddon.fit();
 
-        termRef.current?.writeln(`Copyright (c) ${new Date().getFullYear()} Plan C`);
+        termRef.current.writeln(`Copyright (c) ${new Date().getFullYear()} Plan C`);
     }, [termDivRef.current]);
 
     const onKey = useCallback((event:KeyboardEvent) => {
@@ -148,30 +155,37 @@ function App() {
         >
             <HighlightEditor ref={editRef} language={language} sx={{position:'relative', overflow:'auto', flex:1}} text={code} onChange={(text)=>setCode(text)}/>
             <div ref={termDivRef}></div>
-            <Box sx={{position:'fixed', bottom:8, right:16, zIndex:20, display:'flex', flexDirection:'column', gap:1}}>
-                <GitHubButton href="https://github.com/hubenchang0515/shift" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Star hubenchang0515/shift on GitHub">Star</GitHubButton>
-                <Paper>
-                <FormControl fullWidth variant="standard">
-                    <Select
-                        value={language}
-                        onChange={(ev)=>setLanguage(ev.target.value)}
-                        sx={{paddingX:1}}
-                    >
-                        {
-                            LANGUAGES.map((item, index) => {
-                                return <MenuItem key={index} value={item.name}>{item.label}</MenuItem>
-                            })
-                        }
-                    </Select>
-                </FormControl>
-                </Paper>
-                <Button size='small' variant='contained' color='inherit' onClick={share}>SHARE</Button>
-                <Tooltip title="Ctrl + L" arrow placement='left'>
-                    <Button size='small' variant='contained' color='secondary' onClick={()=>{termRef.current?.reset();}}>CLEAR</Button>
-                </Tooltip>
-                <Tooltip title="Ctrl + S"arrow placement='left'>
-                    <Button size='small' variant='contained' onClick={()=>{execute(["/tmp/code"]);}}>RUN</Button>
-                </Tooltip>
+            <Box sx={{position:'fixed', bottom:8, right:8, display:'flex', flexDirection:'column'}}>
+                <IconButton onClick={()=>{setOpen(!open)}} sx={{color:'#fff', alignSelf:'center'}}>
+                    {open ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
+                </IconButton>
+                <Collapse in={open}>
+                    <Box sx={{display:'flex', flexDirection:'column', gap:1}}>
+                        <GitHubButton href="https://github.com/hubenchang0515/shift" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Star hubenchang0515/shift on GitHub">Star</GitHubButton>
+                        <Paper>
+                        <FormControl fullWidth variant="standard">
+                            <Select
+                                value={language}
+                                onChange={(ev)=>setLanguage(ev.target.value)}
+                                sx={{paddingX:1}}
+                            >
+                                {
+                                    LANGUAGES.map((item, index) => {
+                                        return <MenuItem key={index} value={item.name}>{item.label}</MenuItem>
+                                    })
+                                }
+                            </Select>
+                        </FormControl>
+                        </Paper>
+                        <Button size='small' variant='contained' color='inherit' onClick={share}>SHARE</Button>
+                        <Tooltip title="Ctrl + L" arrow placement='left'>
+                            <Button size='small' variant='contained' color='secondary' onClick={()=>{termRef.current?.reset();}}>CLEAR</Button>
+                        </Tooltip>
+                        <Tooltip title="Ctrl + S"arrow placement='left'>
+                            <Button size='small' variant='contained' onClick={()=>{execute(["/tmp/code"]);}}>RUN</Button>
+                        </Tooltip>
+                    </Box>
+                </Collapse>
             </Box>
         </Box>
     )
