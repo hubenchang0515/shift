@@ -15,24 +15,36 @@ import lua from './wasm/lua.js';
 import picoc from './wasm/picoc.js';
 // @ts-ignore
 import python from './wasm/python.js';
+// @ts-ignore
+import ruby from './wasm/ruby.js';
 
 const LANGUAGES = [
     {
         name: "python",
         label: "Python",
         interpreter: python,
+        arguments: [],
     },
 
     {
         name: "lua",
         label: "Lua",
         interpreter: lua,
+        arguments: [],
+    },
+
+    {
+        name: "ruby",
+        label: "Ruby",
+        interpreter: ruby,
+        arguments: ["--disable-gems"],
     },
 
     {
         name: "c",
         label: "C",
         interpreter: picoc,
+        arguments: [],
     },
 ]
 
@@ -70,14 +82,16 @@ function App() {
 
     const execute = useCallback((args:any[]) => {
         let interpreter = null;
+        let preargs:string[] = [];
         for (const lang of LANGUAGES) {
             if (lang.name === language) {
                 interpreter = lang.interpreter;
+                preargs = lang.arguments;
                 break
             }
         }
         interpreter({
-            arguments: args,
+            arguments: [...preargs, ...args],
             preRun: [function(module:any) {
                 module.FS.writeFile(`/tmp/code`, code);
                 let i = 0;
