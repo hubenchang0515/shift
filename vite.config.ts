@@ -12,7 +12,7 @@ export default defineConfig({
       manifest: {
         name: 'Shift',
         short_name: 'Shift',
-        description: 'Edit and run code script online - 在线编辑和运行代码脚本',
+        description: 'WebAssembly runtime for Python, Lua, Ruby and etc.',
         theme_color: '#ffffff',
         icons: [
           {

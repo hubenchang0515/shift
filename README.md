@@ -1,6 +1,6 @@
 # Shift - Online Code Interpreter
 
-Edit and run code script online - 在线编辑和运行代码脚本
+WebAssembly runtime for Python, Lua, Ruby and etc.
 
 ![preview](./preview.png)
 
