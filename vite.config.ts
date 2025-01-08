@@ -33,7 +33,8 @@ export default defineConfig({
         enabled: true,
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 16 * 1024 ** 2, // 16 MB or set to something else
+        maximumFileSizeToCacheInBytes: 32 * 1024 ** 2, // 32 MB or set to something else
+        globPatterns: ['**/*.{wasm,data}'],
       }
     }),
   ],
