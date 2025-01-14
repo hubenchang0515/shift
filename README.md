@@ -1,4 +1,4 @@
-# Shift - Online Code Interpreter
+# Shift
 
 WebAssembly runtime for Python, Lua, Ruby and etc.
 
