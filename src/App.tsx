@@ -8,6 +8,7 @@ import GitHubButton from 'react-github-btn'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TerminalIcon from '@mui/icons-material/Terminal';
+import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 
 // @ts-ignore
 import lua from './wasm/lua.js';
@@ -196,7 +197,7 @@ function App() {
                     </IconButton>
                     <Collapse in={open}>
                         <Box sx={{display:'flex', flexDirection:'column', gap:1, alignSelf:'flex-end'}}>
-                            <GitHubButton href="https://github.com/hubenchang0515/shift" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" data-show-count="true" aria-label="Star hubenchang0515/shift on GitHub">Star</GitHubButton>
+                            <GitHubButton href="https://github.com/hubenchang0515/shift" data-size="large" data-show-count="true" aria-label="Star hubenchang0515/shift on GitHub">Star</GitHubButton>
                             <Paper>
                             <FormControl fullWidth variant="standard">
                                 <Select
@@ -225,9 +226,21 @@ function App() {
             </Box>
             <Input 
                 fullWidth 
+                sx={{
+                    backgroundColor: 'white',
+                    color: 'black',
+                    borderTop: '1px solid white',
+                }}
                 startAdornment={
                     <InputAdornment position="start">
-                        <TerminalIcon />
+                        <TerminalIcon sx={{color:'black'}}/>
+                    </InputAdornment>
+                }
+                endAdornment={
+                    <InputAdornment position="end">
+                        <IconButton onClick={() => execute(["/tmp/code"])}>
+                            <KeyboardReturnIcon sx={{color:'black'}}/>
+                        </IconButton>
                     </InputAdornment>
                 }
                 placeholder='STDIN'
