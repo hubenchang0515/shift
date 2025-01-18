@@ -147,7 +147,7 @@ function App() {
         }
 
         // 初始化 xterm
-        termRef.current = new Terminal({convertEol: true});
+        termRef.current = new Terminal({convertEol: true, rows:15});
         const fitAddon = new FitAddon();
         termRef.current.loadAddon(fitAddon);
         termRef.current.open(termDivRef.current);
@@ -188,7 +188,7 @@ function App() {
             }}
         >
             <HighlightEditor ref={editRef} language={language} sx={{position:'relative', overflow:'auto', flex:1}} text={code} onChange={(text)=>setCode(text)}/>
-            <Box sx={{position:'relative'}}>
+            <Box sx={{position:'relative', zIndex:10}}>
                 <div ref={termDivRef}></div>
                 <Box sx={{position:'absolute', bottom:8, right:8, display:'flex', flexDirection:'column'}}>
                     <IconButton onClick={()=>{setOpen(!open)}} sx={{color:'#fff', alignSelf:'center'}}>
