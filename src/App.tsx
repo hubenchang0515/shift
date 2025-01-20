@@ -18,6 +18,8 @@ import picoc from './wasm/picoc.js';
 import python from './wasm/python.js';
 // @ts-ignore
 import ruby from './wasm/ruby.js';
+// @ts-ignore
+import chibi from './wasm/chibi.js';
 
 const LANGUAGES = [
     {
@@ -39,6 +41,13 @@ const LANGUAGES = [
         label: "Ruby",
         interpreter: ruby,
         arguments: ["--disable-gems"],
+    },
+
+    {
+        name: "scheme",
+        label: "Scheme",
+        interpreter: chibi,
+        arguments: [],
     },
 
     {
