@@ -127,7 +127,6 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
                 }}
                 wrap="soft"
                 spellCheck="false"
-                autoFocus
                 onChange={refresh}
                 onKeyDown={onKeyDown}
                 onScroll={() => {
