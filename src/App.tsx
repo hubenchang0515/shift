@@ -159,7 +159,7 @@ function App() {
         }
 
         // 初始化 xterm
-        termRef.current = new Terminal({convertEol: true, rows:15});
+        termRef.current = new Terminal({convertEol: true, rows:15, fontFamily:"Fira Code, Noto Sans Mono CJK SC, Consolas, Monaco, monospace", allowProposedApi: true});
         const fitAddon = new FitAddon();
         termRef.current.loadAddon(fitAddon);
         termRef.current.open(termDivRef.current);
