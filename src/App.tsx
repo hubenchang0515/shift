@@ -107,8 +107,10 @@ function App() {
                 let i = 0;
 
                 function stdin() {
-                    if (i < input.length) {
-                        const asciiCode = input.charCodeAt(i);
+                    const encoder = new TextEncoder();
+                    const bytes = encoder.encode(input);
+                    if (i < bytes.length) {
+                        const asciiCode = bytes[i];
                         i += 1;
                         writeTerm(asciiCode);
                         return asciiCode
