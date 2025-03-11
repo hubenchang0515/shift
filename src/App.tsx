@@ -111,11 +111,14 @@ function App() {
                     const bytes = encoder.encode(input);
                     if (i < bytes.length) {
                         const asciiCode = bytes[i];
-                        i += 1;
                         writeTerm(asciiCode);
+                        i += 1;
                         return asciiCode
-                    } else {
+                    } else if (i == bytes.length) {
                         writeTerm(10);
+                        i += 1;
+                        return null
+                    } else {
                         return null
                     }
                 }
