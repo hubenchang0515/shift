@@ -19,7 +19,7 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const displayRef = useRef<HTMLDivElement>(null);
     const [code, setCode] = useState<string>(" ");
-    const font = "Noto Sans Mono CJK SC, Microsoft YaHei, PingFang SC, SimHei, Consolas, Monaco, monospace";
+    const font = "Consolas, Monaco, monospace";
 
     useImperativeHandle(ref, () => displayRef.current);
 
