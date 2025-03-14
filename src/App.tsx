@@ -4,11 +4,11 @@ import HighlightEditor from './components/HighlightEditor'
 import { Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
 import { FitAddon } from '@xterm/addon-fit';
-import GitHubButton from 'react-github-btn'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 // @ts-ignore
 import lua from './wasm/lua.js';
@@ -211,7 +211,7 @@ function App() {
                     </IconButton>
                     <Collapse in={open}>
                         <Box sx={{display:'flex', flexDirection:'column', gap:1, alignSelf:'flex-end'}}>
-                            <GitHubButton href="https://github.com/hubenchang0515/shift" data-size="large" data-show-count="true" aria-label="Star hubenchang0515/shift on GitHub">Star</GitHubButton>
+                            <Button size='small' variant='contained' color='inherit' href='https://github.com/hubenchang0515/shift' target='_blank'><GitHubIcon/></Button>
                             <Paper>
                             <FormControl fullWidth variant="standard">
                                 <Select
