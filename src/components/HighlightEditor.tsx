@@ -109,6 +109,7 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
             </div>
 
             <textarea
+                aria-label="code"
                 ref={inputRef}
                 style={{
                     ...commonStyle,

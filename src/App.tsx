@@ -206,7 +206,7 @@ function App() {
             <Box sx={{position:'relative', zIndex:10}}>
                 <div ref={termDivRef}></div>
                 <Box sx={{position:'absolute', bottom:8, right:8, display:'flex', flexDirection:'column'}}>
-                    <IconButton onClick={()=>{setOpen(!open)}} sx={{color:'#fff', alignSelf:'center'}}>
+                    <IconButton onClick={()=>{setOpen(!open)}} sx={{color:'#fff', alignSelf:'center'}} aria-label="collapse">
                         {open ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
                     </IconButton>
                     <Collapse in={open}>
@@ -218,6 +218,7 @@ function App() {
                                     value={language}
                                     onChange={(ev)=>setLanguage(ev.target.value)}
                                     sx={{paddingX:1}}
+                                    aria-label="language"
                                 >
                                     {
                                         LANGUAGES.map((item, index) => {
@@ -252,7 +253,7 @@ function App() {
                 }
                 endAdornment={
                     <InputAdornment position="end">
-                        <IconButton onClick={() => execute(["/tmp/code"])}>
+                        <IconButton  aria-label="run" onClick={() => execute(["/tmp/code"])}>
                             <KeyboardReturnIcon sx={{color:'black'}}/>
                         </IconButton>
                     </InputAdornment>
