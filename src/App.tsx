@@ -211,14 +211,16 @@ function App() {
                     </IconButton>
                     <Collapse in={open}>
                         <Box sx={{display:'flex', flexDirection:'column', gap:1, alignSelf:'flex-end'}}>
-                            <Button size='small' variant='contained' color='inherit' href='https://github.com/hubenchang0515/shift' target='_blank'><GitHubIcon/></Button>
+                            <Button size='small' variant='contained' color='inherit' aria-label='github' href='https://github.com/hubenchang0515/shift' target='_blank'><GitHubIcon/></Button>
                             <Paper>
                             <FormControl fullWidth variant="standard">
                                 <Select
                                     value={language}
                                     onChange={(ev)=>setLanguage(ev.target.value)}
                                     sx={{paddingX:1}}
-                                    aria-label="language"
+                                    inputProps={{
+                                        "aria-label": "language"
+                                    }}
                                 >
                                     {
                                         LANGUAGES.map((item, index) => {
