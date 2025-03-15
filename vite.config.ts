@@ -38,4 +38,5 @@ export default defineConfig({
       }
     }),
   ],
+  base: '/shift/'
 })
