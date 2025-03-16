@@ -81,15 +81,6 @@ function App() {
         navigator.clipboard.writeText(url.toString());
     }, [language, input, code]);
 
-    const writeTerm = useCallback((utf8Code:any) => {
-        switch (utf8Code) {
-            case 10: termRef.current?.write('\r\n'); break;
-            case 13: termRef.current?.write('\r\n'); break;
-            case 127: termRef.current?.write('\b \b'); break;
-            default: termRef.current?.write(new Uint8Array([utf8Code]));
-        }
-    }, [termRef.current]);
-
     const execute = useCallback((args:any[]) => {
         let interpreter = null;
         let preargs:string[] = [];
@@ -100,41 +91,50 @@ function App() {
                 break
             }
         }
+        let output:number[] = []
         interpreter({
             arguments: [...preargs, ...args],
-            preRun: [function(module:any) {
-                module.FS.writeFile(`/tmp/code`, code);
-                let i = 0;
-
-                function stdin() {
+            preRun: [
+                (module:any) => {
+                    module.FS.writeFile(`/tmp/code`, code);
                     const encoder = new TextEncoder();
                     const bytes = encoder.encode(input);
-                    if (i < bytes.length) {
-                        const utf8Code = bytes[i];
-                        writeTerm(utf8Code);
-                        i += 1;
-                        return utf8Code
-                    } else if (i == bytes.length) {
-                        writeTerm(10);
-                        i += 1;
-                        return null
-                    } else {
-                        return null
+                    let i = 0;
+
+                    function stdin() {
+                        if (i < bytes.length) {
+                            const utf8Code = bytes[i];
+                            output.push(utf8Code)
+                            i += 1;
+                            return utf8Code
+                        } else if (i == bytes.length) {
+                            output.push(10);
+                            i += 1;
+                            return null
+                        } else {
+                            return null
+                        }
                     }
-                }
 
-                function stdout(utf8Code:any) {
-                    writeTerm(utf8Code);
-                }
+                    function stdout(utf8Code:number) {
+                        output.push(utf8Code);
+                    }
 
-                function stderr(utf8Code:any) {
-                    writeTerm(utf8Code);
-                }
+                    function stderr(utf8Code:number) {
+                        output.push(utf8Code);
+                    }
 
-                module.FS.init(stdin, stdout, stderr);
-            }]
+                    module.FS.init(stdin, stdout, stderr);
+                }
+            ],
+
+            postRun: [
+                () => {
+                    termRef.current?.write(new Uint8Array(output));
+                }
+            ]
         });
-    }, [language, code, input, writeTerm]);
+    }, [language, code, input]);
 
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
@@ -154,7 +154,7 @@ function App() {
             setCode(decodeURIComponent(atob(base64Code)));
             execute(["/tmp/code"]);
         }
-    }, [writeTerm]);
+    }, []);
 
     useEffect(() => {
         if (!termDivRef.current || termRef.current) {
