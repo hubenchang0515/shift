@@ -81,12 +81,12 @@ function App() {
         navigator.clipboard.writeText(url.toString());
     }, [language, input, code]);
 
-    const writeTerm = useCallback((asciiCode:any) => {
-        switch (asciiCode) {
+    const writeTerm = useCallback((utf8Code:any) => {
+        switch (utf8Code) {
             case 10: termRef.current?.write('\r\n'); break;
             case 13: termRef.current?.write('\r\n'); break;
             case 127: termRef.current?.write('\b \b'); break;
-            default: termRef.current?.write(new Uint8Array([asciiCode]));
+            default: termRef.current?.write(new Uint8Array([utf8Code]));
         }
     }, [termRef.current]);
 
@@ -110,10 +110,10 @@ function App() {
                     const encoder = new TextEncoder();
                     const bytes = encoder.encode(input);
                     if (i < bytes.length) {
-                        const asciiCode = bytes[i];
-                        writeTerm(asciiCode);
+                        const utf8Code = bytes[i];
+                        writeTerm(utf8Code);
                         i += 1;
-                        return asciiCode
+                        return utf8Code
                     } else if (i == bytes.length) {
                         writeTerm(10);
                         i += 1;
@@ -123,12 +123,12 @@ function App() {
                     }
                 }
 
-                function stdout(asciiCode:any) {
-                    writeTerm(asciiCode);
+                function stdout(utf8Code:any) {
+                    writeTerm(utf8Code);
                 }
 
-                function stderr(asciiCode:any) {
-                    writeTerm(asciiCode);
+                function stderr(utf8Code:any) {
+                    writeTerm(utf8Code);
                 }
 
                 module.FS.init(stdin, stdout, stderr);
