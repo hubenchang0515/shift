@@ -154,7 +154,7 @@ function App() {
             setCode(decodeURIComponent(atob(base64Code)));
             execute(["/tmp/code"]);
         }
-    }, []);
+    }, [termDivRef.current]);
 
     useEffect(() => {
         if (!termDivRef.current || termRef.current) {
