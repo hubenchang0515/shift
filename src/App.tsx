@@ -20,6 +20,8 @@ import python from './wasm/python.js';
 import ruby from './wasm/ruby.js';
 // @ts-ignore
 import chibi from './wasm/chibi.js';
+// @ts-ignore
+import bash from './wasm/bash.js';
 
 const LANGUAGES = [
     {
@@ -33,6 +35,13 @@ const LANGUAGES = [
         name: "lua",
         label: "Lua",
         interpreter: lua,
+        arguments: [],
+    },
+
+    {
+        name: "bash",
+        label: "Bash",
+        interpreter: bash,
         arguments: [],
     },
 
@@ -132,7 +141,7 @@ function App() {
                 () => {
                     termRef.current?.write(new Uint8Array(output));
                 }
-            ]
+            ],
         });
     }, [language, code, input]);
 
