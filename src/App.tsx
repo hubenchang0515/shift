@@ -78,15 +78,19 @@ function App() {
     const [open, setOpen] = useState(true);
 
     const share = useCallback(() => {
-        const url = new URL(window.location.href);
-        url.searchParams.set("lang", language);
+        const params = new URLSearchParams({
+            lang: language,
+        });
+
         if (input) {
-            url.searchParams.set("input", btoa(encodeURIComponent(input)));
+            params.set("input", btoa(encodeURIComponent(input)));
         }
 
         if (code) {
-            url.searchParams.set("code", btoa(encodeURIComponent(code)));
+            params.set("code", btoa(encodeURIComponent(code)));
         }
+        const url = new URL(window.location.href);
+        url.hash = params.toString();
         navigator.clipboard.writeText(url.toString());
     }, [language, input, code]);
 
@@ -146,7 +150,7 @@ function App() {
     }, [language, code, input]);
 
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(window.location.hash.substring(1));
         const lang = params.get("lang");
         const base64Input = params.get("input");
         const base64Code = params.get("code");
