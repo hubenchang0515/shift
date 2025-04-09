@@ -150,7 +150,14 @@ function App() {
     }, [language, code, input]);
 
     useEffect(() => {
-        const params = new URLSearchParams(window.location.hash.substring(1));
+        let paramsString = ""
+        if (window.location.hash) {
+            paramsString = window.location.hash.substring(1)
+        } else if (window.location.search) {
+            paramsString = window.location.search;
+        }
+
+        const params = new URLSearchParams(paramsString);
         const lang = params.get("lang");
         const base64Input = params.get("input");
         const base64Code = params.get("code");
