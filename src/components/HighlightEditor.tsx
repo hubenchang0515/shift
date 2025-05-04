@@ -1,7 +1,7 @@
 import { Box, SxProps, Theme } from "@mui/material";
 import hljs from "highlight.js";
 import { CSSProperties, KeyboardEvent, Ref, useEffect, useImperativeHandle, useRef, useState } from "react";
-import 'highlight.js/styles/nord.css';
+import '../assets/highlight.css';
 import React from "react";
 
 export function listLanguages() {
@@ -19,7 +19,6 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const displayRef = useRef<HTMLDivElement>(null);
     const [code, setCode] = useState<string>(" ");
-    const font = "Consolas, Monaco, monospace";
 
     useImperativeHandle(ref, () => displayRef.current);
 
@@ -76,7 +75,6 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
         padding: 12,
         boxSizing: 'border-box',
         overflow: 'auto',
-        fontFamily: font,
         fontSize: '16px',
         lineHeight: 'normal',
         letterSpacing: 'normal',
@@ -90,7 +88,7 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
         >
             <div 
                 ref={displayRef}
-                className={`language-${props.language} hljs`} 
+                className={`language-${props.language} hljs code-font`} 
                 style={{
                     ...commonStyle,
                     width: '100%', 
@@ -99,8 +97,8 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
                 }}
             >
                 <pre 
+                    className="code-font"
                     style={{
-                        fontFamily: font,
                         margin: 0,
                         padding: 0,
                     }}
@@ -110,6 +108,7 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
 
             <textarea
                 aria-label="code"
+                className="code-font"
                 ref={inputRef}
                 style={{
                     ...commonStyle,
