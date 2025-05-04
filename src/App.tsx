@@ -89,8 +89,8 @@ function App() {
         if (code) {
             params.set("code", btoa(encodeURIComponent(code)));
         }
-        const url = new URL(window.location.href);
-        url.hash = params.toString();
+        const url = new URL(window.location.pathname, window.location.origin);
+        url.search = params.toString();
         navigator.clipboard.writeText(url.toString());
     }, [language, input, code]);
 
