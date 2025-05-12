@@ -9,6 +9,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import './assets/font.css';
 
 // @ts-ignore
 import lua from './wasm/lua.js';

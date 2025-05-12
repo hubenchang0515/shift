@@ -1,6 +1,7 @@
 import { Box, SxProps, Theme } from "@mui/material";
 import hljs from "highlight.js";
 import { CSSProperties, KeyboardEvent, Ref, useEffect, useImperativeHandle, useRef, useState } from "react";
+import '../assets/font.css';
 import '../assets/highlight.css';
 import React from "react";
 
