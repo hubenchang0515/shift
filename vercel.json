@@ -2,6 +2,11 @@
   "cleanUrls": true,
   "rewrites": [
     {
+      "source": "/shift/",
+      "destination": "/"
+    },
+
+    {
       "source": "/shift/:path*",
       "destination": "/:path*"
     }
