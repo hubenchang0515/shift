@@ -38,7 +38,7 @@ export default defineConfig({
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/xplanc-cdn.pages.dev\/.*/i,
-            handler: "NetworkFirst",
+            handler: "CacheFirst",
             options: {
               cacheName: 'xplanc-cdn-cache'
             }
