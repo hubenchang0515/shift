@@ -41,3 +41,4 @@ WebAssembly runtime for Python, Lua, Ruby and etc.
   * -s EXPORT_ES6=1 
   * -s EXPORTED_RUNTIME_METHODS=FS
   * -s ALLOW_MEMORY_GROWTH=1
+  * -s ENVIRONMENT=web
