@@ -78,6 +78,20 @@ function App() {
     const [input, setInput] = useState<string>("");
     const [open, setOpen] = useState(true);
 
+    useEffect(() => {
+        if (window.location.hash || window.location.search) {
+            const meta = document.createElement("meta");
+            meta.name = 'robots';
+            meta.content = 'noindex';
+            const head = document.querySelector('head');
+            head?.appendChild(meta);
+
+            return () => {
+                meta.remove();
+            }
+        }
+    }, []);
+
     const share = useCallback(() => {
         const params = new URLSearchParams({
             lang: language,
@@ -150,6 +164,7 @@ function App() {
         });
     }, [language, code, input]);
 
+
     useEffect(() => {
         let paramsString = ""
         if (window.location.hash) {
@@ -162,14 +177,6 @@ function App() {
         const lang = params.get("lang");
         const base64Input = params.get("input");
         const base64Code = params.get("code");
-
-        if (lang || base64Input || base64Code) {
-            const meta = document.createElement("meta");
-            meta.name = 'robots';
-            meta.content = 'noindex';
-            const head = document.querySelector('head');
-            head?.appendChild(meta);
-        }
 
         if (lang) {
             setLanguage(lang);
