@@ -163,6 +163,14 @@ function App() {
         const base64Input = params.get("input");
         const base64Code = params.get("code");
 
+        if (lang || base64Input || base64Code) {
+            const meta = document.createElement("meta");
+            meta.name = 'robots';
+            meta.content = 'noindex';
+            const head = document.querySelector('head');
+            head?.appendChild(meta);
+        }
+
         if (lang) {
             setLanguage(lang);
         }
