@@ -20,23 +20,23 @@ code {
 
 
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #aaa;
+  background: #66CCFF;
   cursor: default;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #bbb;
+  background: rgb(132, 214, 255);
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.12);
 }
 
 ::-webkit-scrollbar-corner {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.12);
 }
