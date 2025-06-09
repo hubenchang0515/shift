@@ -71,6 +71,11 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
         refresh();
     }, [props.language])
 
+    // 自动聚焦
+    useEffect(() => {
+        inputRef.current?.focus({ preventScroll: true });
+    }, [inputRef])
+
     const commonStyle:CSSProperties = {
         margin: 0,
         padding: 12,
@@ -130,7 +135,6 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
                 }}
                 wrap="soft"
                 spellCheck="false"
-                autoFocus
                 onChange={refresh}
                 onKeyDown={onKeyDown}
                 onScroll={() => {
