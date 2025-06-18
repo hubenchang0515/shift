@@ -265,7 +265,7 @@ function App() {
                                 <Select
                                     value={language}
                                     onChange={(ev)=>setLanguage(ev.target.value)}
-                                    sx={{paddingX:1}}
+                                    sx={{paddingX:1, minWidth:'6em'}}
                                     inputProps={{
                                         "aria-label": "language"
                                     }}
