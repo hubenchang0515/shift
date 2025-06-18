@@ -10,5 +10,19 @@
       "source": "/shift/:path*",
       "destination": "/:path*"
     }
+  ],
+
+  "redirects": [
+    {
+      "source": "/shift/assets/:name-:hash.wasm",
+      "destination": "https://xplanc-cdn.pages.dev/shift/:name.wasm",
+      "permanent": true
+    },
+
+    {
+      "source": "/:name.data",
+      "destination": "https://xplanc-cdn.pages.dev/shift/:name.data",
+      "permanent": true
+    }
   ]
 }
