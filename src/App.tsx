@@ -277,7 +277,7 @@ function App() {
                                     }
 
                                     {
-                                        LANGUAGES.some(item=>item.name===language) ||
+                                        LANGUAGES.some(item=>item.name===language) ? <></> :
                                         <MenuItem key={language} value={language}>{language}</MenuItem>
                                     }
                                 </Select>
