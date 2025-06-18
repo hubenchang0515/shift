@@ -198,8 +198,15 @@ function App() {
         }
 
         // 初始化 xterm
-        termRef.current = new Terminal({convertEol: true, rows:15, allowProposedApi: true});
+        termRef.current = new Terminal({
+            convertEol: true, 
+            rows:15, 
+            allowProposedApi: true, 
+            fontFamily:'"Maple Mono CN", Consolas, Monaco, monospace',
+            letterSpacing: 0,
+        });
         const fitAddon = new FitAddon();
+        
         termRef.current.loadAddon(fitAddon);
         termRef.current.open(termDivRef.current);
         fitAddon.fit();
