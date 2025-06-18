@@ -119,8 +119,13 @@ function App() {
                 break
             }
         }
+
+        if (interpreter === null) {
+            termRef.current?.write(`不支持运行 ${language}`)
+        }
+
         let output:number[] = []
-        interpreter({
+        interpreter?.({
             arguments: [...preargs, ...args],
             preRun: [
                 (module:any) => {
@@ -269,6 +274,11 @@ function App() {
                                         LANGUAGES.map((item, index) => {
                                             return <MenuItem key={index} value={item.name}>{item.label}</MenuItem>
                                         })
+                                    }
+
+                                    {
+                                        LANGUAGES.some(item=>item.name===language) ||
+                                        <MenuItem key={language} value={language}>{language}</MenuItem>
                                     }
                                 </Select>
                             </FormControl>
