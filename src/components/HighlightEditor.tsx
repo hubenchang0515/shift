@@ -25,8 +25,13 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
 
     // 生成高亮
     const highlight = (text:string) => {
-        const result = hljs.highlight(text, {language:props.language, ignoreIllegals:true});
-        setCode(result.value);
+        if (hljs.getLanguage(props.language)) {
+            const result = hljs.highlight(text, {language:props.language, ignoreIllegals:true});
+            setCode(result.value);
+        } else {
+            const result = hljs.highlightAuto(text);
+            setCode(result.value);
+        }
     }
 
     // 输入响应
