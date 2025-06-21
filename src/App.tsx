@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Box, Button, Collapse, FormControl, IconButton, Input, InputAdornment, MenuItem, Paper, Select, Tooltip } from '@mui/material'
+import { Alert, AlertProps, Box, Button, Collapse, createTheme, CssBaseline, FormControl, IconButton, Input, InputAdornment, MenuItem, Paper, Select, Snackbar, ThemeProvider, Tooltip } from '@mui/material'
 import HighlightEditor from './components/HighlightEditor'
 import { Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
@@ -10,6 +10,7 @@ import TerminalIcon from '@mui/icons-material/Terminal';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import './assets/font.css';
+import { blue, pink } from '@mui/material/colors';
 
 // @ts-ignore
 import lua from './wasm/lua.js';
@@ -78,6 +79,10 @@ function App() {
     const [input, setInput] = useState<string>("");
     const [open, setOpen] = useState(true);
 
+    const [message, setMessage] = useState("");
+    const [messageSeverity, setMessageSeverity] = useState<AlertProps['severity']>('error');
+    const [messageOpen, setMessageOpen] = useState(false);
+
     useEffect(() => {
         if (window.location.hash || window.location.search) {
             const meta = document.createElement("meta");
@@ -93,20 +98,31 @@ function App() {
     }, []);
 
     const share = useCallback(() => {
-        const params = new URLSearchParams({
-            lang: language,
-        });
+            const params = new URLSearchParams({
+                lang: language,
+            });
 
-        if (input) {
-            params.set("input", btoa(encodeURIComponent(input)));
-        }
+            if (input) {
+                params.set("input", btoa(encodeURIComponent(input)));
+            }
 
-        if (code) {
-            params.set("code", btoa(encodeURIComponent(code)));
+            if (code) {
+                params.set("code", btoa(encodeURIComponent(code)));
+            }
+            const url = new URL(window.location.pathname, window.location.origin);
+            url.search = params.toString();
+            
+        if (navigator?.clipboard?.writeText) {
+            navigator.clipboard.writeText(url.toString()).then(() => {
+                setMessageSeverity("success");
+                setMessage("Code URL copied.");
+                setMessageOpen(true);
+            });
+        } else {
+            setMessageSeverity("error");
+            setMessage("Code URL copy failed.");
+            setMessageOpen(true);
         }
-        const url = new URL(window.location.pathname, window.location.origin);
-        url.search = params.toString();
-        navigator.clipboard.writeText(url.toString());
     }, [language, input, code]);
 
     const execute = useCallback((args:any[]) => {
@@ -241,90 +257,112 @@ function App() {
         }
     }, [onKey]);
 
-    return (
-        <Box
-            sx={{
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-            }}
-        >
-            <HighlightEditor ref={editRef} language={language} sx={{position:'relative', overflow:'auto', flex:1}} text={code} onChange={(text)=>setCode(text)}/>
-            <Box sx={{position:'relative', zIndex:10}}>
-                <div ref={termDivRef} className='code-font'></div>
-                <Box sx={{position:'absolute', bottom:8, right:8, display:'flex', flexDirection:'column'}}>
-                    <IconButton onClick={()=>{setOpen(!open)}} sx={{color:'#fff', alignSelf:'center'}} aria-label="collapse">
-                        {open ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
-                    </IconButton>
-                    <Collapse in={open}>
-                        <Box sx={{display:'flex', flexDirection:'column', gap:1, alignSelf:'flex-end'}}>
-                            <Button size='small' variant='contained' color='inherit' aria-label='github' href='https://github.com/hubenchang0515/shift' target='_blank'><GitHubIcon/></Button>
-                            <Paper>
-                            <FormControl fullWidth variant="standard">
-                                <Select
-                                    value={language}
-                                    onChange={(ev)=>setLanguage(ev.target.value)}
-                                    sx={{paddingX:1, minWidth:'6em'}}
-                                    inputProps={{
-                                        "aria-label": "language"
-                                    }}
-                                >
-                                    {
-                                        LANGUAGES.map((item, index) => {
-                                            return <MenuItem key={index} value={item.name}>{item.label}</MenuItem>
-                                        })
-                                    }
+    const darkTheme = createTheme({
+        palette: {
+            mode: 'dark',
+            primary: blue,
+            secondary: pink
+        },
+    });
 
-                                    {
-                                        LANGUAGES.some(item=>item.name===language) ? <></> :
-                                        <MenuItem key={language} value={language}>{language}</MenuItem>
-                                    }
-                                </Select>
-                            </FormControl>
-                            </Paper>
-                            <Button size='small' variant='contained' color='inherit' onClick={share}>SHARE</Button>
-                            <Tooltip title="Ctrl + L" arrow placement='left'>
-                                <Button size='small' variant='contained' color='secondary' onClick={()=>{termRef.current?.reset();}}>CLEAR</Button>
-                            </Tooltip>
-                            <Tooltip title="Ctrl + S"arrow placement='left'>
-                                <Button size='small' variant='contained' onClick={()=>{execute(["/tmp/code"]);}}>RUN</Button>
-                            </Tooltip>
-                        </Box>
-                    </Collapse>
-                </Box>
-            </Box>
-            <Input 
-                fullWidth 
+    return (
+        <ThemeProvider theme={darkTheme}>
+            <CssBaseline />
+            <Box
                 sx={{
-                    backgroundColor: 'white',
-                    color: 'black',
-                    borderTop: '1px solid white',
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
                 }}
-                startAdornment={
-                    <InputAdornment position="start">
-                        <TerminalIcon sx={{color:'black'}}/>
-                    </InputAdornment>
-                }
-                endAdornment={
-                    <InputAdornment position="end">
-                        <IconButton  aria-label="run" onClick={() => execute(["/tmp/code"])}>
-                            <KeyboardReturnIcon sx={{color:'black'}}/>
+            >
+                <Snackbar
+                    color='success'
+                    open={messageOpen}
+                    autoHideDuration={2000}
+                    onClose={()=>setMessageOpen(false)}
+                    anchorOrigin={{vertical: 'top', horizontal: 'center'}}
+                >
+                    <Alert severity={messageSeverity}>
+                        {message}
+                    </Alert>
+                </Snackbar>
+                <HighlightEditor ref={editRef} language={language} sx={{position:'relative', overflow:'auto', flex:1}} text={code} onChange={(text)=>setCode(text)}/>
+                <Box sx={{position:'relative', zIndex:10}}>
+                    <div ref={termDivRef} className='code-font'></div>
+                    <Box sx={{position:'absolute', bottom:8, right:8, display:'flex', flexDirection:'column'}}>
+                        <IconButton onClick={()=>{setOpen(!open)}} sx={{color:'#fff', alignSelf:'center'}} aria-label="collapse">
+                            {open ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
                         </IconButton>
-                    </InputAdornment>
-                }
-                placeholder='STDIN'
-                value={input} 
-                onChange={(ev)=>{
-                    setInput(ev.target.value);
-                }}
-                onKeyDown={(ev)=>{
-                    if (ev.key === 'Enter') {
-                        execute(["/tmp/code"]);
+                        <Collapse in={open}>
+                            <Box sx={{display:'flex', flexDirection:'column', gap:1, alignSelf:'flex-end'}}>
+                                <Button size='small' variant='contained' color='inherit' aria-label='github' href='https://github.com/hubenchang0515/shift' target='_blank'><GitHubIcon/></Button>
+                                <Paper>
+                                <FormControl fullWidth variant="standard">
+                                    <Select
+                                        value={language}
+                                        onChange={(ev)=>setLanguage(ev.target.value)}
+                                        sx={{paddingX:1, minWidth:'6em'}}
+                                        inputProps={{
+                                            "aria-label": "language"
+                                        }}
+                                    >
+                                        {
+                                            LANGUAGES.map((item, index) => {
+                                                return <MenuItem key={index} value={item.name}>{item.label}</MenuItem>
+                                            })
+                                        }
+
+                                        {
+                                            LANGUAGES.some(item=>item.name===language) ? <></> :
+                                            <MenuItem key={language} value={language}>{language}</MenuItem>
+                                        }
+                                    </Select>
+                                </FormControl>
+                                </Paper>
+                                <Button variant='contained' color='inherit' disabled={!navigator?.clipboard?.writeText} onClick={share}>SHARE</Button>
+                                <Tooltip title="Ctrl + L" arrow placement='left'>
+                                    <Button size='small' variant='contained' color='secondary' onClick={()=>{termRef.current?.reset();}}>CLEAR</Button>
+                                </Tooltip>
+                                <Tooltip title="Ctrl + S"arrow placement='left'>
+                                    <Button size='small' variant='contained' onClick={()=>{execute(["/tmp/code"]);}}>RUN</Button>
+                                </Tooltip>
+                            </Box>
+                        </Collapse>
+                    </Box>
+                </Box>
+                <Input 
+                    fullWidth 
+                    sx={{
+                        backgroundColor: 'white',
+                        color: 'black',
+                        borderTop: '1px solid white',
+                    }}
+                    startAdornment={
+                        <InputAdornment position="start">
+                            <TerminalIcon sx={{color:'black'}}/>
+                        </InputAdornment>
                     }
-                }}
-            />
-        </Box>
+                    endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton  aria-label="run" onClick={() => execute(["/tmp/code"])}>
+                                <KeyboardReturnIcon sx={{color:'black'}}/>
+                            </IconButton>
+                        </InputAdornment>
+                    }
+                    placeholder='STDIN'
+                    value={input} 
+                    onChange={(ev)=>{
+                        setInput(ev.target.value);
+                    }}
+                    onKeyDown={(ev)=>{
+                        if (ev.key === 'Enter') {
+                            execute(["/tmp/code"]);
+                        }
+                    }}
+                />
+            </Box>
+        </ThemeProvider>
     )
 }
 
