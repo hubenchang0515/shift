@@ -24,6 +24,7 @@ import ruby from './wasm/ruby.js';
 import chibi from './wasm/chibi.js';
 // @ts-ignore
 import bash from './wasm/bash.js';
+import { WebLinksAddon } from 'xterm-addon-web-links';
 
 const LANGUAGES = [
     {
@@ -228,11 +229,12 @@ function App() {
         });
         const fitAddon = new FitAddon();
         
-        termRef.current.loadAddon(fitAddon);
+        termRef.current.loadAddon(new FitAddon());
+        termRef.current.loadAddon(new WebLinksAddon());
         termRef.current.open(termDivRef.current);
         fitAddon.fit();
 
-        termRef.current.writeln(`Copyright (c) ${new Date().getFullYear()} Plan C`);
+        termRef.current.writeln(`Copyright (c) ${new Date().getFullYear()} Plan C (https://xplanc.org)`);
     }, [termDivRef.current]);
 
     const onKey = useCallback((event:KeyboardEvent) => {
