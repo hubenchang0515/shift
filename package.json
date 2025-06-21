@@ -16,13 +16,13 @@
     "@mui/icons-material": "^6.3.1",
     "@mui/material": "^6.4.12",
     "@xterm/addon-fit": "^0.10.0",
+    "@xterm/addon-web-links": "^0.11.0",
     "@xterm/xterm": "^5.5.0",
     "gh-pages": "^6.3.0",
     "highlight.js": "^11.11.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "vite-plugin-pwa": "^0.21.1",
-    "xterm-addon-web-links": "^0.9.0"
+    "vite-plugin-pwa": "^0.21.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

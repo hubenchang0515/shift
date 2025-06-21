@@ -4,7 +4,7 @@ import HighlightEditor from './components/HighlightEditor'
 import { Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
 import { FitAddon } from '@xterm/addon-fit';
-import { WebLinksAddon } from 'xterm-addon-web-links';
+import { WebLinksAddon } from '@xterm/addon-web-links';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TerminalIcon from '@mui/icons-material/Terminal';
