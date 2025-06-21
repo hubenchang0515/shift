@@ -4,6 +4,7 @@ import HighlightEditor from './components/HighlightEditor'
 import { Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
 import { FitAddon } from '@xterm/addon-fit';
+import { WebLinksAddon } from 'xterm-addon-web-links';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TerminalIcon from '@mui/icons-material/Terminal';
@@ -11,6 +12,7 @@ import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import './assets/font.css';
 import { blue, pink } from '@mui/material/colors';
+import Loading from './components/Loading.js';
 
 // @ts-ignore
 import lua from './wasm/lua.js';
@@ -24,7 +26,6 @@ import ruby from './wasm/ruby.js';
 import chibi from './wasm/chibi.js';
 // @ts-ignore
 import bash from './wasm/bash.js';
-import { WebLinksAddon } from 'xterm-addon-web-links';
 
 const LANGUAGES = [
     {
@@ -84,6 +85,8 @@ function App() {
     const [messageSeverity, setMessageSeverity] = useState<AlertProps['severity']>('error');
     const [messageOpen, setMessageOpen] = useState(false);
 
+    const [running, setRunning] = useState(false);
+
     useEffect(() => {
         if (window.location.hash || window.location.search) {
             const meta = document.createElement("meta");
@@ -140,50 +143,56 @@ function App() {
         if (interpreter === null) {
             termRef.current?.write(`不支持运行 ${language}`)
         }
+        setRunning(true);
 
-        let output:number[] = []
-        interpreter?.({
-            arguments: [...preargs, ...args],
-            preRun: [
-                (module:any) => {
-                    module.FS.writeFile(`/tmp/code`, code);
-                    const encoder = new TextEncoder();
-                    const bytes = encoder.encode(input);
-                    let i = 0;
+        const task = () => {
+            let output:number[] = []
+            interpreter?.({
+                arguments: [...preargs, ...args],
+                preRun: [
+                    (module:any) => {
+                        module.FS.writeFile(`/tmp/code`, code);
+                        const encoder = new TextEncoder();
+                        const bytes = encoder.encode(input);
+                        let i = 0;
 
-                    function stdin() {
-                        if (i < bytes.length) {
-                            const utf8Code = bytes[i];
-                            output.push(utf8Code)
-                            i += 1;
-                            return utf8Code
-                        } else if (i == bytes.length) {
-                            output.push(10);
-                            i += 1;
-                            return null
-                        } else {
-                            return null
+                        function stdin() {
+                            if (i < bytes.length) {
+                                const utf8Code = bytes[i];
+                                output.push(utf8Code)
+                                i += 1;
+                                return utf8Code
+                            } else if (i == bytes.length) {
+                                output.push(10);
+                                i += 1;
+                                return null
+                            } else {
+                                return null
+                            }
                         }
+
+                        function stdout(utf8Code:number) {
+                            output.push(utf8Code);
+                        }
+
+                        function stderr(utf8Code:number) {
+                            output.push(utf8Code);
+                        }
+
+                        module.FS.init(stdin, stdout, stderr);
                     }
+                ],
 
-                    function stdout(utf8Code:number) {
-                        output.push(utf8Code);
+                postRun: [
+                    () => {
+                        termRef.current?.write(new Uint8Array(output));
+                        setRunning(false);
                     }
+                ],
+            });
+        };
 
-                    function stderr(utf8Code:number) {
-                        output.push(utf8Code);
-                    }
-
-                    module.FS.init(stdin, stdout, stderr);
-                }
-            ],
-
-            postRun: [
-                () => {
-                    termRef.current?.write(new Uint8Array(output));
-                }
-            ],
-        });
+        queueMicrotask(task);
     }, [language, code, input]);
 
 
@@ -327,7 +336,15 @@ function App() {
                                     <Button size='small' variant='contained' color='secondary' onClick={()=>{termRef.current?.reset();}}>CLEAR</Button>
                                 </Tooltip>
                                 <Tooltip title="Ctrl + S"arrow placement='left'>
-                                    <Button size='small' variant='contained' onClick={()=>{execute(["/tmp/code"]);}}>RUN</Button>
+                                    <Button 
+                                        size='small' 
+                                        variant='contained' 
+                                        onClick={()=>{execute(["/tmp/code"]);}} 
+                                        loading={running}
+                                        loadingIndicator={<Loading size={20} value={100} thickness={4}/>}
+                                    >
+                                        RUN
+                                    </Button>
                                 </Tooltip>
                             </Box>
                         </Collapse>
