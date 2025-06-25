@@ -87,6 +87,7 @@ function App() {
 
     const [running, setRunning] = useState(false);
 
+    // 设置 noindex
     useEffect(() => {
         if (window.location.hash || window.location.search) {
             const meta = document.createElement("meta");
@@ -101,20 +102,21 @@ function App() {
         }
     }, []);
 
+    // 复制分享链接
     const share = useCallback(() => {
-            const params = new URLSearchParams({
-                lang: language,
-            });
+        const params = new URLSearchParams({
+            lang: language,
+        });
 
-            if (input) {
-                params.set("input", btoa(encodeURIComponent(input)));
-            }
+        if (input) {
+            params.set("input", btoa(encodeURIComponent(input)));
+        }
 
-            if (code) {
-                params.set("code", btoa(encodeURIComponent(code)));
-            }
-            const url = new URL(window.location.pathname, window.location.origin);
-            url.search = params.toString();
+        if (code) {
+            params.set("code", btoa(encodeURIComponent(code)));
+        }
+        const url = new URL(window.location.pathname, window.location.origin);
+        url.search = params.toString();
             
         if (navigator?.clipboard?.writeText) {
             navigator.clipboard.writeText(url.toString()).then(() => {
@@ -129,6 +131,7 @@ function App() {
         }
     }, [language, input, code]);
 
+    // 运行代码
     const execute = useCallback((args:any[]) => {
         let interpreter = null;
         let preargs:string[] = [];
@@ -195,7 +198,7 @@ function App() {
         queueMicrotask(task);
     }, [language, code, input]);
 
-
+    // 带参数的 URL 初始化
     useEffect(() => {
         let paramsString = ""
         if (window.location.hash) {
