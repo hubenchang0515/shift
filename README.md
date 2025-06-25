@@ -38,10 +38,12 @@ WebAssembly runtime for Python, Lua, Ruby and etc.
 Python:
 
 ```python
+import base64
 from urllib.parse import quote
+
 lang = 'python'
-input:str = base64.b64encode(quote(input_text).encode('utf-8')).decode('utf-8')
-code:str = base64.b64encode(quote(code_text).encode('utf-8')).decode('utf-8')
+input:str = quote(base64.b64encode(quote(input_text).encode('utf-8')).decode('utf-8'))
+code:str = quote(base64.b64encode(quote(code_text).encode('utf-8')).decode('utf-8'))
 url = f'https://xplanc.org/shift/#lang={lang}&input={input}&code={code}'
 ```
 
@@ -49,8 +51,8 @@ JavaScript:
 
 ```js
 lang = 'python'
-input = btoa(encodeURIComponent(input_text))
-code = btoa(encodeURIComponent(code_text))
+input = encodeURIComponent(btoa(encodeURIComponent(input_text)))
+code = encodeURIComponent(btoa(encodeURIComponent(code_text)))
 url = `https://xplanc.org/shift/#lang=${lang}&input=${input}&code=${code}`
 ```
 
