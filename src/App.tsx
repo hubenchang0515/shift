@@ -26,6 +26,7 @@ import ruby from './wasm/ruby.js';
 import chibi from './wasm/chibi.js';
 // @ts-ignore
 import bash from './wasm/bash.js';
+import { wrapFetch } from './fetch.js';
 
 const LANGUAGES = [
     {
@@ -238,6 +239,7 @@ function App() {
         setFirstRun(false);
     }, [firstRun, execute]);
 
+    // 初始化
     useEffect(() => {
         if (!termDivRef.current) {
             return;
@@ -261,8 +263,12 @@ function App() {
         term.writeln(`Copyright (c) ${new Date().getFullYear()} Plan C (https://xplanc.org)`);
         setTerminal(term);
 
+        // 封装 fetch
+        const originalFetch = wrapFetch({mode: 'cors'});
+
         return () => {
             term.dispose();
+            window.fetch = originalFetch;
         }
     }, []);
 
