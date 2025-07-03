@@ -20,7 +20,7 @@
     },
 
     {
-      "source": "/:name.data",
+      "source": "/shift/:name.data",
       "destination": "https://xplanc-cdn.pages.dev/shift/:name.data",
       "permanent": true
     }
