@@ -74,7 +74,7 @@ const LANGUAGES = [
 function App() {
     const editRef = useRef<HTMLDivElement>(null);
     const termDivRef = useRef<HTMLDivElement>(null);
-    const termRef = useRef<Terminal>();
+    const [terminal, setTerminal] = useState<Terminal|null>(null);
 
     const [language, setLanguage] = useState<string>("python");
     const [code, setCode] = useState<string>("");
@@ -86,6 +86,8 @@ function App() {
     const [messageOpen, setMessageOpen] = useState(false);
 
     const [running, setRunning] = useState(false);
+
+    const [firstRun, setFirstRun] = useState(false);
 
     // 设置 noindex
     useEffect(() => {
@@ -144,7 +146,7 @@ function App() {
         }
 
         if (interpreter === null) {
-            termRef.current?.write(`不支持运行 ${language}`)
+            terminal?.write(`不支持运行 ${language}`)
         }
         setRunning(true);
 
@@ -188,7 +190,7 @@ function App() {
 
                 postRun: [
                     () => {
-                        termRef.current?.write(new Uint8Array(output));
+                        terminal?.write(new Uint8Array(output));
                         setRunning(false);
                     }
                 ],
@@ -196,7 +198,7 @@ function App() {
         };
 
         queueMicrotask(task);
-    }, [language, code, input]);
+    }, [terminal, language, code, input]);
 
     // 带参数的 URL 初始化
     useEffect(() => {
@@ -222,17 +224,27 @@ function App() {
 
         if (base64Code) {
             setCode(decodeURIComponent(atob(base64Code)));
-            execute(["/tmp/code"]);
+            setFirstRun(true);
         }
-    }, [termDivRef.current]);
+    }, []);
+
+    // 初始运行
+    useEffect(() => {
+        if (!firstRun) {
+            return;
+        }
+
+        execute(["/tmp/code"]);
+        setFirstRun(false);
+    }, [firstRun, execute]);
 
     useEffect(() => {
-        if (!termDivRef.current || termRef.current) {
+        if (!termDivRef.current) {
             return;
         }
 
         // 初始化 xterm
-        termRef.current = new Terminal({
+        const term = new Terminal({
             convertEol: true, 
             rows:15, 
             allowProposedApi: true, 
@@ -241,13 +253,18 @@ function App() {
         });
         const fitAddon = new FitAddon();
         
-        termRef.current.loadAddon(new FitAddon());
-        termRef.current.loadAddon(new WebLinksAddon());
-        termRef.current.open(termDivRef.current);
+        term.loadAddon(new FitAddon());
+        term.loadAddon(new WebLinksAddon());
+        term.open(termDivRef.current);
         fitAddon.fit();
 
-        termRef.current.writeln(`Copyright (c) ${new Date().getFullYear()} Plan C (https://xplanc.org)`);
-    }, [termDivRef.current]);
+        term.writeln(`Copyright (c) ${new Date().getFullYear()} Plan C (https://xplanc.org)`);
+        setTerminal(term);
+
+        return () => {
+            term.dispose();
+        }
+    }, []);
 
     const onKey = useCallback((event:KeyboardEvent) => {
         if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -257,7 +274,7 @@ function App() {
 
         if ((event.ctrlKey || event.metaKey) && event.key === 'l') {
             event.preventDefault();
-            termRef.current?.reset();
+            terminal?.reset();
         }
         
     }, [execute]);
@@ -336,7 +353,7 @@ function App() {
                                 </Paper>
                                 <Button variant='contained' color='inherit' disabled={!navigator?.clipboard?.writeText} onClick={share}>SHARE</Button>
                                 <Tooltip title="Ctrl + L" arrow placement='left'>
-                                    <Button size='small' variant='contained' color='secondary' onClick={()=>{termRef.current?.reset();}}>CLEAR</Button>
+                                    <Button size='small' variant='contained' color='secondary' onClick={()=>{terminal?.reset();}}>CLEAR</Button>
                                 </Tooltip>
                                 <Tooltip title="Ctrl + S"arrow placement='left'>
                                     <Button 

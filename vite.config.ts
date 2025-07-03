@@ -40,8 +40,11 @@ export default defineConfig({
             urlPattern: /^https:\/\/xplanc-cdn.pages.dev\/.*/i,
             handler: "CacheFirst",
             options: {
-              cacheName: 'xplanc-cdn-cache'
-            }
+              cacheName: 'xplanc-cdn-cache',
+              cacheableResponse: {
+                statuses: [0, 200], // 允许 opaque 响应被缓存（status 0）
+              },
+            },
           },
         ]
       },
