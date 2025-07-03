@@ -35,7 +35,6 @@ export default defineConfig({
       workbox: {
         maximumFileSizeToCacheInBytes: 32 * 1024 ** 2, // 32 MB or set to something else
         globPatterns: ['**/*.{js,css,html,ttf}'],
-        globIgnores : ['**/*.{wasm,data}'],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/xplanc-cdn.pages.dev\/.*/i,
