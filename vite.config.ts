@@ -38,7 +38,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ttf}'],
         runtimeCaching: [
           {
-            urlPattern: /^https:\/\/xplanc-cdn.pages.dev\/.*/i,
+            urlPattern: ()=>true,
             handler: "CacheFirst",
             options: {
               cacheName: 'xplanc-cdn-cache',
