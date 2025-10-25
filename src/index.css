@@ -6,8 +6,11 @@ html, body, #root {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: "Maple Mono CN", Consolas, Monaco, monospace;
+}
+
+.fix-xterm * {
+  letter-spacing: 0 !important;
 }
 
 @media (max-width: 900px) {

@@ -257,6 +257,7 @@ function App() {
         // 初始化 xterm
         const term = new Terminal({
             convertEol: true, 
+            rows:15, 
             allowProposedApi: true, 
             fontFamily:'"Maple Mono CN", Consolas, Monaco, monospace',
             letterSpacing: 0,
@@ -334,7 +335,7 @@ function App() {
                 </Snackbar>
                 <HighlightEditor ref={editRef} language={language} sx={{position:'relative', overflow:'auto', flex:1}} text={code} onChange={(text)=>setCode(text)}/>
                 <Box sx={{position:'relative', zIndex:10}}>
-                    <div ref={termDivRef} className='code-font'></div>
+                    <div ref={termDivRef} className='code fix-xterm'></div>
                     <Box sx={{position:'absolute', bottom:8, right:8, display:'flex', flexDirection:'column'}}>
                         <IconButton onClick={()=>{setOpen(!open)}} sx={{color:'#fff', alignSelf:'center'}} aria-label="collapse">
                             {open ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
