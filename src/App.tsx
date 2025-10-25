@@ -13,6 +13,7 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import './assets/font.css';
 import { blue, pink } from '@mui/material/colors';
 import Loading from './components/Loading.js';
+import { wrapFetch } from './fetch.js';
 
 // @ts-ignore
 import lua from './wasm/lua.js';
@@ -26,13 +27,21 @@ import ruby from './wasm/ruby.js';
 import chibi from './wasm/chibi.js';
 // @ts-ignore
 import bash from './wasm/bash.js';
-import { wrapFetch } from './fetch.js';
+// @ts-ignore
+import qjs from './wasm/qjs.js';
 
 const LANGUAGES = [
     {
         name: "python",
         label: "Python",
         interpreter: python,
+        arguments: [],
+    },
+
+    {
+        name: "javascript",
+        label: "JavaScript",
+        interpreter: qjs,
         arguments: [],
     },
 
@@ -339,7 +348,7 @@ function App() {
                                     <Select
                                         value={language}
                                         onChange={(ev)=>setLanguage(ev.target.value)}
-                                        sx={{paddingX:1, minWidth:'6em'}}
+                                        sx={{paddingX:1, minWidth:'8em'}}
                                         inputProps={{
                                             "aria-label": "language"
                                         }}
