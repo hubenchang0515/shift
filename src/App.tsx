@@ -257,14 +257,13 @@ function App() {
         // 初始化 xterm
         const term = new Terminal({
             convertEol: true, 
-            rows:15, 
             allowProposedApi: true, 
             fontFamily:'"Maple Mono CN", Consolas, Monaco, monospace',
             letterSpacing: 0,
         });
+
         const fitAddon = new FitAddon();
-        
-        term.loadAddon(new FitAddon());
+        term.loadAddon(fitAddon);
         term.loadAddon(new WebLinksAddon());
         term.open(termDivRef.current);
         fitAddon.fit();
