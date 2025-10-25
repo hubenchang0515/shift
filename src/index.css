@@ -7,9 +7,11 @@ html, body, #root {
 
 code {
   font-family: "Maple Mono CN", Consolas, Monaco, monospace;
+  letter-spacing: 0 !important;
 }
 
-.fix-xterm * {
+.fix-xterm, .fix-xterm * {
+  font-family: "Maple Mono CN", Consolas, Monaco, monospace;
   letter-spacing: 0 !important;
 }
 

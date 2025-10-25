@@ -82,6 +82,7 @@ const LANGUAGES = [
 ]
 
 function App() {
+    const [ready, setReady] = useState(false);
     const editRef = useRef<HTMLDivElement>(null);
     const termDivRef = useRef<HTMLDivElement>(null);
     const [terminal, setTerminal] = useState<Terminal|null>(null);
@@ -238,19 +239,24 @@ function App() {
         }
     }, []);
 
+    // 等待字体加载完成
+    useEffect(() => {
+        document.fonts.ready.then(()=>{setReady(true)});
+    }, []);
+
     // 初始运行
     useEffect(() => {
-        if (!firstRun) {
+        if (!ready || !firstRun || !terminal) {
             return;
         }
 
         execute(["/tmp/code"]);
         setFirstRun(false);
-    }, [firstRun, execute]);
+    }, [ready, firstRun, terminal, execute]);
 
     // 初始化
     useEffect(() => {
-        if (!termDivRef.current) {
+        if (!ready || !termDivRef.current) {
             return;
         }
 
@@ -279,7 +285,7 @@ function App() {
             term.dispose();
             window.fetch = originalFetch;
         }
-    }, []);
+    }, [ready]);
 
     const onKey = useCallback((event:KeyboardEvent) => {
         if ((event.ctrlKey || event.metaKey) && event.key === 's') {
@@ -335,7 +341,7 @@ function App() {
                 </Snackbar>
                 <HighlightEditor ref={editRef} language={language} sx={{position:'relative', overflow:'auto', flex:1}} text={code} onChange={(text)=>setCode(text)}/>
                 <Box sx={{position:'relative', zIndex:10}}>
-                    <div ref={termDivRef} className='code fix-xterm'></div>
+                    <div ref={termDivRef} className='code fix-xterm' style={{background:'#000', height:300}}></div>
                     <Box sx={{position:'absolute', bottom:8, right:8, display:'flex', flexDirection:'column'}}>
                         <IconButton onClick={()=>{setOpen(!open)}} sx={{color:'#fff', alignSelf:'center'}} aria-label="collapse">
                             {open ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
