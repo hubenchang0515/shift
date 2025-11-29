@@ -14,14 +14,8 @@
 
   "redirects": [
     {
-      "source": "/shift/assets/:name-:hash.wasm",
-      "destination": "https://xplanc-cdn.pages.dev/shift/:name.wasm",
-      "permanent": true
-    },
-
-    {
-      "source": "/shift/:name.data",
-      "destination": "https://xplanc-cdn.pages.dev/shift/:name.data",
+      "source": "/shift/wasm/:file",
+      "destination": "https://xplanc-cdn.pages.dev/shift/:file",
       "permanent": true
     }
   ]
