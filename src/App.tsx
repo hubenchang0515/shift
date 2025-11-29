@@ -165,6 +165,13 @@ function App() {
             let output:number[] = []
             interpreter?.({
                 arguments: [...preargs, ...args],
+                locateFile: (path:string, scriptDirectory:string) => {
+                    if (path.endsWith(".data") || path.endsWith(".wasm")) {
+                        return import.meta.env.BASE_URL + "wasm/" + path;
+                    } else {
+                        return scriptDirectory + path;
+                    }
+                },
                 preRun: [
                     (module:any) => {
                         module.FS.writeFile(`/tmp/code`, code);
