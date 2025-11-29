@@ -1,5 +1,6 @@
 @font-face {
     font-family: 'Maple Mono CN';
+    font-display: swap;
     src: url('https://xplanc-cdn.pages.dev/MapleMonoNL-CN-Regular.ttf');
 }
   
