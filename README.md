@@ -33,7 +33,59 @@ WebAssembly runtime for Python, Lua, Ruby and etc.
   * [fibonacci](https://xplanc.org/shift/#lang=c&code=JTIzaW5jbHVkZSUyMCUzQ3N0ZGlvLmglM0UlMEElMEElMkYlMkYlMjAlRTklODAlOTIlRTUlQkQlOTIlRTUlQUUlOUUlRTclOEUlQjAlRTYlOTYlOTAlRTYlQjMlQTIlRTklODIlQTMlRTUlQTUlOTElRTYlOTUlQjAlRTUlODglOTclMEFpbnQlMjBmaWJvbmFjY2koaW50JTIwbiklMjAlN0IlMEElMjAlMjAlMjAlMjBpZiUyMChuJTIwJTNEJTNEJTIwMCklMjAlN0IlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjByZXR1cm4lMjAwJTNCJTBBJTIwJTIwJTIwJTIwJTdEJTIwZWxzZSUyMGlmJTIwKG4lMjAlM0QlM0QlMjAxKSUyMCU3QiUwQSUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMHJldHVybiUyMDElM0IlMEElMjAlMjAlMjAlMjAlN0QlMjBlbHNlJTIwJTdCJTBBJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwcmV0dXJuJTIwZmlib25hY2NpKG4lMjAtJTIwMSklMjAlMkIlMjBmaWJvbmFjY2kobiUyMC0lMjAyKSUzQiUwQSUyMCUyMCUyMCUyMCU3RCUwQSU3RCUwQSUwQWludCUyMG1haW4oKSUyMCU3QiUwQSUyMCUyMCUyMCUyMGludCUyMG4lMjAlM0QlMjAyMCUzQiUwQSUyMCUyMCUyMCUyMGZvciUyMChpbnQlMjBpJTIwJTNEJTIwMCUzQiUyMGklMjAlM0MlMjBuJTNCJTIwaSUyQiUyQiklMjAlN0IlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjBwcmludGYoJTIyJTI1ZCUyMCUyMiUyQyUyMGZpYm9uYWNjaShpKSklM0IlMEElMjAlMjAlMjAlMjAlN0QlMEElMjAlMjAlMjAlMjBwcmludGYoJTIyJTVDbiUyMiklM0IlMEElMEElMjAlMjAlMjAlMjByZXR1cm4lMjAwJTNCJTBBJTdEJTBB)
   * [triangle](https://xplanc.org/shift/#lang=c&code=JTIzaW5jbHVkZSUyMCUzQ3N0ZGlvLmglM0UlMEElMEElMjNkZWZpbmUlMjBOJTIwMjAlMEElMEF2b2lkJTIwZ2VuZXJhdGVQYXNjYWxUcmlhbmdsZShpbnQlMjBuKSUyMCU3QiUwQSUyMCUyMCUyMCUyMGludCUyMHRyaWFuZ2xlJTVCTiU1RCU1Qk4lNUQlM0IlMEElMEElMjAlMjAlMjAlMjBpZiUyMChuJTIwJTNFJTNEJTIwTiklMjAlN0IlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjBmcHJpbnRmKHN0ZGVyciUyQyUyMCUyMmVycm9yJTNBJTIwb3V0JTIwb2YlMjByYW5nZSU1Q24lMjIpJTNCJTBBJTIwJTIwJTIwJTIwJTdEJTBBJTBBJTIwJTIwJTIwJTIwJTJGJTJGJTIwJUU1JTg4JTlEJUU1JUE3JThCJUU1JThDJTk2JUU2JTlEJUE4JUU4JUJFJTg5JUU0JUI4JTg5JUU4JUE3JTkyJUVGJUJDJThDJUU3JUFDJUFDJUU0JUI4JTgwJUU1JTg4JTk3JUU1JTkyJThDJUU1JUFGJUI5JUU4JUE3JTkyJUU3JUJBJUJGJUU4JUFFJUJFJUU3JUJEJUFFJUU0JUI4JUJBMSUwQSUyMCUyMCUyMCUyMGZvciUyMChpbnQlMjBpJTIwJTNEJTIwMCUzQiUyMGklMjAlM0MlMjBuJTNCJTIwaSUyQiUyQiklMjAlN0IlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjBmb3IlMjAoaW50JTIwaiUyMCUzRCUyMDAlM0IlMjBqJTIwJTNDJTNEJTIwaSUzQiUyMGolMkIlMkIpJTIwJTdCJTBBJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwaWYlMjAoaiUyMCUzRCUzRCUyMDAlMjAlN0MlN0MlMjBqJTIwJTNEJTNEJTIwaSklMjAlN0IlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjB0cmlhbmdsZSU1QmklNUQlNUJqJTVEJTIwJTNEJTIwMSUzQiUwQSUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMCU3RCUyMGVsc2UlMjAlN0IlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjB0cmlhbmdsZSU1QmklNUQlNUJqJTVEJTIwJTNEJTIwdHJpYW5nbGUlNUJpLTElNUQlNUJqLTElNUQlMjAlMkIlMjB0cmlhbmdsZSU1QmktMSU1RCU1QmolNUQlM0IlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlN0QlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlN0QlMEElMjAlMjAlMjAlMjAlN0QlMEElMEElMjAlMjAlMjAlMjAlMkYlMkYlMjAlRTYlODklOTMlRTUlOEQlQjAlRTYlOUQlQTglRTglQkUlODklRTQlQjglODklRTglQTclOTIlMEElMjAlMjAlMjAlMjBmb3IlMjAoaW50JTIwaSUyMCUzRCUyMDAlM0IlMjBpJTIwJTNDJTIwbiUzQiUyMGklMkIlMkIpJTIwJTdCJTBBJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwZm9yJTIwKGludCUyMGolMjAlM0QlMjAwJTNCJTIwaiUyMCUzQyUzRCUyMGklM0IlMjBqJTJCJTJCKSUyMCU3QiUwQSUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMHByaW50ZiglMjIlMjVkJTIwJTIyJTJDJTIwdHJpYW5nbGUlNUJpJTVEJTVCaiU1RCklM0IlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlN0QlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjBwcmludGYoJTIyJTVDbiUyMiklM0IlMEElMjAlMjAlMjAlMjAlN0QlMEElN0QlMEElMEFpbnQlMjBtYWluKCklMjAlN0IlMEElMjAlMjAlMjAlMjBnZW5lcmF0ZVBhc2NhbFRyaWFuZ2xlKDEwKSUzQiUwQSUwQSUyMCUyMCUyMCUyMHJldHVybiUyMDAlM0IlMEElN0QlMEE%3D)
 
-## 链接生成
+## Usage - 使用
+
+### ES6 module
+
+```html
+<html>
+    <body>
+        <!-- Create a element to display output -->
+        <pre id="output"></pre>
+        <script type="module">
+            // Load module
+            import lua from "https://shift.js.org/wasm/lua.js"                   // interpreter run time
+            import makeConfig from "https://shift.js.org/wasm/common.js"         // interpreter config
+
+            // the code to run
+            const code = "print('hello')"
+
+            // callback to get result
+            const fn = (text) => document.querySelector("#output").innerText=text
+
+            // run the code
+            lua(makeConfig(code, fn));
+        </script>
+    </body>
+</html>
+```
+
+### Refer page in `<iframe>`
+
+```html
+<html>
+    <body>
+        <!-- iframe to display shift -->
+        <iframe id="code" title="Shift" style="width: 100%; height: 600px; border: 0;"></iframe>
+
+        <script>
+            const lang = 'lua'                      // language
+            const input_text = ''                   // data of STDIN
+            const code_text = 'print("hello")'      // code to run
+
+            // generate URL
+            const input = encodeURIComponent(btoa(encodeURIComponent(input_text)))
+            const code = encodeURIComponent(btoa(encodeURIComponent(code_text)))
+            const url = `https://shift.js.org/#lang=${lang}&input=${input}&code=${code}`
+            
+            // set iframe src
+            document.querySelector("#code").src = url;
+        </script>
+    </body>
+</html>
+```
+
+## Link - 链接生成
 
 Python:
 

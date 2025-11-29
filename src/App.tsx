@@ -276,6 +276,7 @@ function App() {
         fitAddon.fit();
 
         term.writeln(`Copyright (c) ${new Date().getFullYear()} Plan C (https://xplanc.org)`);
+        term.writeln(`See help in ${window.location.href}usage.html`);
         setTerminal(term);
 
         // 封装 fetch
