@@ -1,0 +1,277 @@
+<html>
+    <head>
+        <title>Usage - Shift</title>
+        <meta charSet='utf-8'/>
+        <meta name='viewport' content='width=device-width, initial-scale=1'/>
+        <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.8.1/github-markdown.min.css'/>
+    </head>
+    <body class="markdown-body">
+        <div style="max-width: 1080px; margin: auto;">
+<h1>Shift</h1>
+<p>WebAssembly runtime for Python, Lua, Ruby and etc.</p>
+<blockquote>
+<p>Back to <a href="https://hubenchang0515.github.io/shift/" target="_blank">shift</a>.</p>
+</blockquote>
+<h2>Usage</h2>
+<h3>Basic</h3>
+<p>Select your programming language from the menu in the bottom right corner.</p>
+<p>Edit your code in the editor.</p>
+<p>Set the input to standard input in the input box at the bottom.</p>
+<p>Click the RUN button or press <code content="# Shift 
+
+WebAssembly runtime for Python, Lua, Ruby and etc.
+
+&gt; Back to [shift](/).
+
+## Usage
+
+### Basic
+
+Select your programming language from the menu in the bottom right corner. 
+
+Edit your code in the editor. 
+
+Set the input to standard input in the input box at the bottom. 
+
+Click the RUN button or press `Ctrl + S` to run the code.
+
+Click the CLEAR button or press `Ctrl + L` to clear the terminal.
+
+Click the SHARE button to clear the terminal's generated data and copy the share link.
+
+### ES6 module
+
+```html
+&lt;html&gt;
+    &lt;body&gt;
+        &lt;!-- Create a element to display output --&gt;
+        &lt;pre id=&quot;output&quot;&gt;&lt;/pre&gt;
+        &lt;script type=&quot;module&quot;&gt;
+            // Load module
+            import lua from &quot;https://shift.js.org/wasm/lua.js&quot;                   // interpreter run time
+            import makeConfig from &quot;https://shift.js.org/wasm/common.js&quot;         // interpreter config
+
+            // the code to run
+            const code = &quot;print('hello')&quot;
+
+            // callback to get result
+            const fn = (text) =&gt; document.querySelector(&quot;#output&quot;).innerText=text
+
+            // run the code
+            lua(makeConfig(code, fn));
+        &lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+```
+
+### Refer page in `&lt;iframe&gt;`
+
+```html
+&lt;html&gt;
+    &lt;body&gt;
+        &lt;!-- iframe to display shift --&gt;
+        &lt;iframe id=&quot;code&quot; title=&quot;Shift&quot; style=&quot;width: 100%; height: 600px; border: 0;&quot;&gt;&lt;/iframe&gt;
+
+        &lt;script&gt;
+            const lang = 'lua'                      // language
+            const input_text = ''                   // data of STDIN
+            const code_text = 'print(&quot;hello&quot;)'      // code to run
+
+            // generate URL
+            const input = encodeURIComponent(btoa(encodeURIComponent(input_text)))
+            const code = encodeURIComponent(btoa(encodeURIComponent(code_text)))
+            const url = `https://shift.js.org/#lang=${lang}&amp;input=${input}&amp;code=${code}`
+            
+            // set iframe src
+            document.querySelector(&quot;#code&quot;).src = url;
+        &lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+```">Ctrl + S</code> to run the code.</p>
+<p>Click the CLEAR button or press <code content="# Shift 
+
+WebAssembly runtime for Python, Lua, Ruby and etc.
+
+&gt; Back to [shift](/).
+
+## Usage
+
+### Basic
+
+Select your programming language from the menu in the bottom right corner. 
+
+Edit your code in the editor. 
+
+Set the input to standard input in the input box at the bottom. 
+
+Click the RUN button or press `Ctrl + S` to run the code.
+
+Click the CLEAR button or press `Ctrl + L` to clear the terminal.
+
+Click the SHARE button to clear the terminal's generated data and copy the share link.
+
+### ES6 module
+
+```html
+&lt;html&gt;
+    &lt;body&gt;
+        &lt;!-- Create a element to display output --&gt;
+        &lt;pre id=&quot;output&quot;&gt;&lt;/pre&gt;
+        &lt;script type=&quot;module&quot;&gt;
+            // Load module
+            import lua from &quot;https://shift.js.org/wasm/lua.js&quot;                   // interpreter run time
+            import makeConfig from &quot;https://shift.js.org/wasm/common.js&quot;         // interpreter config
+
+            // the code to run
+            const code = &quot;print('hello')&quot;
+
+            // callback to get result
+            const fn = (text) =&gt; document.querySelector(&quot;#output&quot;).innerText=text
+
+            // run the code
+            lua(makeConfig(code, fn));
+        &lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+```
+
+### Refer page in `&lt;iframe&gt;`
+
+```html
+&lt;html&gt;
+    &lt;body&gt;
+        &lt;!-- iframe to display shift --&gt;
+        &lt;iframe id=&quot;code&quot; title=&quot;Shift&quot; style=&quot;width: 100%; height: 600px; border: 0;&quot;&gt;&lt;/iframe&gt;
+
+        &lt;script&gt;
+            const lang = 'lua'                      // language
+            const input_text = ''                   // data of STDIN
+            const code_text = 'print(&quot;hello&quot;)'      // code to run
+
+            // generate URL
+            const input = encodeURIComponent(btoa(encodeURIComponent(input_text)))
+            const code = encodeURIComponent(btoa(encodeURIComponent(code_text)))
+            const url = `https://shift.js.org/#lang=${lang}&amp;input=${input}&amp;code=${code}`
+            
+            // set iframe src
+            document.querySelector(&quot;#code&quot;).src = url;
+        &lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+```">Ctrl + L</code> to clear the terminal.</p>
+<p>Click the SHARE button to clear the terminal's generated data and copy the share link.</p>
+<h3>ES6 module</h3>
+<pre style="background: transparent; margin: 0px; padding: 0px;"><pre class="language-html" style="text-align: left; white-space: pre; word-spacing: normal; word-break: normal; overflow-wrap: normal; color: rgb(238, 238, 238); background: rgb(47, 47, 47); font-family: &quot;Roboto Mono&quot;, monospace; font-size: 1em; line-height: 1.5em; tab-size: 4; hyphens: none; overflow: auto; position: relative; margin: 0.5em 0px; padding: 1.25em 1em;"><code class="language-html" style="white-space: pre; text-align: left; word-spacing: normal; word-break: normal; overflow-wrap: normal; color: rgb(238, 238, 238); background: rgb(47, 47, 47); font-family: &quot;Roboto Mono&quot;, monospace; font-size: 1em; line-height: 1.5em; tab-size: 4; hyphens: none;"><code class="language-html" style="white-space: pre;"><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>1</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>html</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span><span class=""><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>2</span></span><span class=""><span>    </span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>body</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span><span class=""><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>3</span></span><span class=""><span>        </span></span><span class="token comment" style="color: rgb(97, 97, 97);"><span>&lt;!-- Create a element to display output --&gt;</span></span><span class=""><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>4</span></span><span class=""><span>        </span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>pre</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span> </span></span><span class="token tag attr-name" style="color: rgb(255, 203, 107);"><span>id</span></span><span class="token tag attr-value punctuation attr-equals" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token tag attr-value punctuation" style="color: rgb(137, 221, 255);"><span>"</span></span><span class="token tag attr-value" style="color: rgb(165, 232, 68);"><span>output</span></span><span class="token tag attr-value punctuation" style="color: rgb(137, 221, 255);"><span>"</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;/</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>pre</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span><span class=""><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>5</span></span><span class=""><span>        </span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>script</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span> </span></span><span class="token tag attr-name" style="color: rgb(255, 203, 107);"><span>type</span></span><span class="token tag attr-value punctuation attr-equals" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token tag attr-value punctuation" style="color: rgb(137, 221, 255);"><span>"</span></span><span class="token tag attr-value" style="color: rgb(165, 232, 68);"><span>module</span></span><span class="token tag attr-value punctuation" style="color: rgb(137, 221, 255);"><span>"</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>6</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript comment" style="color: rgb(97, 97, 97);"><span>// Load module</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>7</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript keyword module" style="color: rgb(199, 146, 234);"><span>import</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript imports"><span>lua</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript keyword module" style="color: rgb(199, 146, 234);"><span>from</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript string" style="color: rgb(165, 232, 68);"><span>"https://shift.js.org/wasm/lua.js"</span></span><span class="token script language-javascript"><span>                   </span></span><span class="token script language-javascript comment" style="color: rgb(97, 97, 97);"><span>// interpreter run time</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>8</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript keyword module" style="color: rgb(199, 146, 234);"><span>import</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript imports"><span>makeConfig</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript keyword module" style="color: rgb(199, 146, 234);"><span>from</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript string" style="color: rgb(165, 232, 68);"><span>"https://shift.js.org/wasm/common.js"</span></span><span class="token script language-javascript"><span>         </span></span><span class="token script language-javascript comment" style="color: rgb(97, 97, 97);"><span>// interpreter config</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>9</span></span><span>
+</span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>10</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript comment" style="color: rgb(97, 97, 97);"><span>// the code to run</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>11</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript keyword" style="color: rgb(199, 146, 234);"><span>const</span></span><span class="token script language-javascript"><span> code </span></span><span class="token script language-javascript operator" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript string" style="color: rgb(165, 232, 68);"><span>"print('hello')"</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>12</span></span><span>
+</span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>13</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript comment" style="color: rgb(97, 97, 97);"><span>// callback to get result</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>14</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript keyword" style="color: rgb(199, 146, 234);"><span>const</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript function-variable function" style="color: rgb(199, 146, 234);"><span>fn</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript operator" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>(</span></span><span class="token script language-javascript parameter"><span>text</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>)</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript arrow operator" style="color: rgb(137, 221, 255);"><span>=&gt;</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript dom variable" style="color: rgb(255, 102, 102);"><span>document</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>.</span></span><span class="token script language-javascript method function property-access" style="color: rgb(199, 146, 234);"><span>querySelector</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>(</span></span><span class="token script language-javascript string" style="color: rgb(165, 232, 68);"><span>"#output"</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>)</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>.</span></span><span class="token script language-javascript property-access"><span>innerText</span></span><span class="token script language-javascript operator" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token script language-javascript"><span>text
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>15</span></span><span>
+</span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>16</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript comment" style="color: rgb(97, 97, 97);"><span>// run the code</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>17</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript function" style="color: rgb(199, 146, 234);"><span>lua</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>(</span></span><span class="token script language-javascript function" style="color: rgb(199, 146, 234);"><span>makeConfig</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>(</span></span><span class="token script language-javascript"><span>code</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>,</span></span><span class="token script language-javascript"><span> fn</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>)</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>)</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>;</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>18</span></span><span class="token script language-javascript"><span>        </span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;/</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>script</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span><span class=""><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>19</span></span><span class=""><span>    </span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;/</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>body</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span><span class=""><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>20</span></span><span class=""><span></span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;/</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>html</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span></code></code></pre></pre>
+<h3>Refer page in <code content="# Shift 
+
+WebAssembly runtime for Python, Lua, Ruby and etc.
+
+&gt; Back to [shift](/).
+
+## Usage
+
+### Basic
+
+Select your programming language from the menu in the bottom right corner. 
+
+Edit your code in the editor. 
+
+Set the input to standard input in the input box at the bottom. 
+
+Click the RUN button or press `Ctrl + S` to run the code.
+
+Click the CLEAR button or press `Ctrl + L` to clear the terminal.
+
+Click the SHARE button to clear the terminal's generated data and copy the share link.
+
+### ES6 module
+
+```html
+&lt;html&gt;
+    &lt;body&gt;
+        &lt;!-- Create a element to display output --&gt;
+        &lt;pre id=&quot;output&quot;&gt;&lt;/pre&gt;
+        &lt;script type=&quot;module&quot;&gt;
+            // Load module
+            import lua from &quot;https://shift.js.org/wasm/lua.js&quot;                   // interpreter run time
+            import makeConfig from &quot;https://shift.js.org/wasm/common.js&quot;         // interpreter config
+
+            // the code to run
+            const code = &quot;print('hello')&quot;
+
+            // callback to get result
+            const fn = (text) =&gt; document.querySelector(&quot;#output&quot;).innerText=text
+
+            // run the code
+            lua(makeConfig(code, fn));
+        &lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+```
+
+### Refer page in `&lt;iframe&gt;`
+
+```html
+&lt;html&gt;
+    &lt;body&gt;
+        &lt;!-- iframe to display shift --&gt;
+        &lt;iframe id=&quot;code&quot; title=&quot;Shift&quot; style=&quot;width: 100%; height: 600px; border: 0;&quot;&gt;&lt;/iframe&gt;
+
+        &lt;script&gt;
+            const lang = 'lua'                      // language
+            const input_text = ''                   // data of STDIN
+            const code_text = 'print(&quot;hello&quot;)'      // code to run
+
+            // generate URL
+            const input = encodeURIComponent(btoa(encodeURIComponent(input_text)))
+            const code = encodeURIComponent(btoa(encodeURIComponent(code_text)))
+            const url = `https://shift.js.org/#lang=${lang}&amp;input=${input}&amp;code=${code}`
+            
+            // set iframe src
+            document.querySelector(&quot;#code&quot;).src = url;
+        &lt;/script&gt;
+    &lt;/body&gt;
+&lt;/html&gt;
+```">&lt;iframe&gt;</code></h3>
+<pre style="background: transparent; margin: 0px; padding: 0px;"><pre class="language-html" style="text-align: left; white-space: pre; word-spacing: normal; word-break: normal; overflow-wrap: normal; color: rgb(238, 238, 238); background: rgb(47, 47, 47); font-family: &quot;Roboto Mono&quot;, monospace; font-size: 1em; line-height: 1.5em; tab-size: 4; hyphens: none; overflow: auto; position: relative; margin: 0.5em 0px; padding: 1.25em 1em;"><code class="language-html" style="white-space: pre; text-align: left; word-spacing: normal; word-break: normal; overflow-wrap: normal; color: rgb(238, 238, 238); background: rgb(47, 47, 47); font-family: &quot;Roboto Mono&quot;, monospace; font-size: 1em; line-height: 1.5em; tab-size: 4; hyphens: none;"><code class="language-html" style="white-space: pre;"><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>1</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>html</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span><span class=""><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>2</span></span><span class=""><span>    </span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>body</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span><span class=""><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>3</span></span><span class=""><span>        </span></span><span class="token comment" style="color: rgb(97, 97, 97);"><span>&lt;!-- iframe to display shift --&gt;</span></span><span class=""><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>4</span></span><span class=""><span>        </span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>iframe</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span> </span></span><span class="token tag attr-name" style="color: rgb(255, 203, 107);"><span>id</span></span><span class="token tag attr-value punctuation attr-equals" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token tag attr-value punctuation" style="color: rgb(137, 221, 255);"><span>"</span></span><span class="token tag attr-value" style="color: rgb(165, 232, 68);"><span>code</span></span><span class="token tag attr-value punctuation" style="color: rgb(137, 221, 255);"><span>"</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span> </span></span><span class="token tag attr-name" style="color: rgb(255, 203, 107);"><span>title</span></span><span class="token tag attr-value punctuation attr-equals" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token tag attr-value punctuation" style="color: rgb(137, 221, 255);"><span>"</span></span><span class="token tag attr-value" style="color: rgb(165, 232, 68);"><span>Shift</span></span><span class="token tag attr-value punctuation" style="color: rgb(137, 221, 255);"><span>"</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span> </span></span><span class="token tag special-attr attr-name" style="color: rgb(255, 203, 107);"><span>style</span></span><span class="token tag special-attr attr-value punctuation attr-equals" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token tag special-attr attr-value punctuation" style="color: rgb(137, 221, 255);"><span>"</span></span><span class="token tag special-attr attr-value value css language-css property" style="color: rgb(128, 203, 196);"><span>width</span></span><span class="token tag special-attr attr-value value css language-css punctuation" style="color: rgb(137, 221, 255);"><span>:</span></span><span class="token tag special-attr attr-value value css language-css" style="color: rgb(165, 232, 68);"><span> </span></span><span class="token tag special-attr attr-value value css language-css number" style="color: rgb(253, 145, 112);"><span>100</span></span><span class="token tag special-attr attr-value value css language-css unit" style="color: rgb(253, 145, 112);"><span>%</span></span><span class="token tag special-attr attr-value value css language-css punctuation" style="color: rgb(137, 221, 255);"><span>;</span></span><span class="token tag special-attr attr-value value css language-css" style="color: rgb(165, 232, 68);"><span> </span></span><span class="token tag special-attr attr-value value css language-css property" style="color: rgb(128, 203, 196);"><span>height</span></span><span class="token tag special-attr attr-value value css language-css punctuation" style="color: rgb(137, 221, 255);"><span>:</span></span><span class="token tag special-attr attr-value value css language-css" style="color: rgb(165, 232, 68);"><span> </span></span><span class="token tag special-attr attr-value value css language-css number" style="color: rgb(253, 145, 112);"><span>600</span></span><span class="token tag special-attr attr-value value css language-css unit" style="color: rgb(253, 145, 112);"><span>px</span></span><span class="token tag special-attr attr-value value css language-css punctuation" style="color: rgb(137, 221, 255);"><span>;</span></span><span class="token tag special-attr attr-value value css language-css" style="color: rgb(165, 232, 68);"><span> </span></span><span class="token tag special-attr attr-value value css language-css property" style="color: rgb(128, 203, 196);"><span>border</span></span><span class="token tag special-attr attr-value value css language-css punctuation" style="color: rgb(137, 221, 255);"><span>:</span></span><span class="token tag special-attr attr-value value css language-css" style="color: rgb(165, 232, 68);"><span> </span></span><span class="token tag special-attr attr-value value css language-css number" style="color: rgb(253, 145, 112);"><span>0</span></span><span class="token tag special-attr attr-value value css language-css punctuation" style="color: rgb(137, 221, 255);"><span>;</span></span><span class="token tag special-attr attr-value punctuation" style="color: rgb(137, 221, 255);"><span>"</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;/</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>iframe</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span><span class=""><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>5</span></span><span>
+</span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>6</span></span><span class=""><span>        </span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>script</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>7</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript keyword" style="color: rgb(199, 146, 234);"><span>const</span></span><span class="token script language-javascript"><span> lang </span></span><span class="token script language-javascript operator" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript string" style="color: rgb(165, 232, 68);"><span>'lua'</span></span><span class="token script language-javascript"><span>                      </span></span><span class="token script language-javascript comment" style="color: rgb(97, 97, 97);"><span>// language</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>8</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript keyword" style="color: rgb(199, 146, 234);"><span>const</span></span><span class="token script language-javascript"><span> input_text </span></span><span class="token script language-javascript operator" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript string" style="color: rgb(165, 232, 68);"><span>''</span></span><span class="token script language-javascript"><span>                   </span></span><span class="token script language-javascript comment" style="color: rgb(97, 97, 97);"><span>// data of STDIN</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>9</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript keyword" style="color: rgb(199, 146, 234);"><span>const</span></span><span class="token script language-javascript"><span> code_text </span></span><span class="token script language-javascript operator" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript string" style="color: rgb(165, 232, 68);"><span>'print("hello")'</span></span><span class="token script language-javascript"><span>      </span></span><span class="token script language-javascript comment" style="color: rgb(97, 97, 97);"><span>// code to run</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>10</span></span><span>
+</span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>11</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript comment" style="color: rgb(97, 97, 97);"><span>// generate URL</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>12</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript keyword" style="color: rgb(199, 146, 234);"><span>const</span></span><span class="token script language-javascript"><span> input </span></span><span class="token script language-javascript operator" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript function" style="color: rgb(199, 146, 234);"><span>encodeURIComponent</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>(</span></span><span class="token script language-javascript function" style="color: rgb(199, 146, 234);"><span>btoa</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>(</span></span><span class="token script language-javascript function" style="color: rgb(199, 146, 234);"><span>encodeURIComponent</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>(</span></span><span class="token script language-javascript"><span>input_text</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>)</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>)</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>)</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>13</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript keyword" style="color: rgb(199, 146, 234);"><span>const</span></span><span class="token script language-javascript"><span> code </span></span><span class="token script language-javascript operator" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript function" style="color: rgb(199, 146, 234);"><span>encodeURIComponent</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>(</span></span><span class="token script language-javascript function" style="color: rgb(199, 146, 234);"><span>btoa</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>(</span></span><span class="token script language-javascript function" style="color: rgb(199, 146, 234);"><span>encodeURIComponent</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>(</span></span><span class="token script language-javascript"><span>code_text</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>)</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>)</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>)</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>14</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript keyword" style="color: rgb(199, 146, 234);"><span>const</span></span><span class="token script language-javascript"><span> url </span></span><span class="token script language-javascript operator" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript template-string template-punctuation string" style="color: rgb(165, 232, 68);"><span>`</span></span><span class="token script language-javascript template-string string" style="color: rgb(165, 232, 68);"><span>https://shift.js.org/#lang=</span></span><span class="token script language-javascript template-string interpolation interpolation-punctuation punctuation" style="color: rgb(137, 221, 255);"><span>${</span></span><span class="token script language-javascript template-string interpolation"><span>lang</span></span><span class="token script language-javascript template-string interpolation interpolation-punctuation punctuation" style="color: rgb(137, 221, 255);"><span>}</span></span><span class="token script language-javascript template-string string" style="color: rgb(165, 232, 68);"><span>&amp;input=</span></span><span class="token script language-javascript template-string interpolation interpolation-punctuation punctuation" style="color: rgb(137, 221, 255);"><span>${</span></span><span class="token script language-javascript template-string interpolation"><span>input</span></span><span class="token script language-javascript template-string interpolation interpolation-punctuation punctuation" style="color: rgb(137, 221, 255);"><span>}</span></span><span class="token script language-javascript template-string string" style="color: rgb(165, 232, 68);"><span>&amp;code=</span></span><span class="token script language-javascript template-string interpolation interpolation-punctuation punctuation" style="color: rgb(137, 221, 255);"><span>${</span></span><span class="token script language-javascript template-string interpolation"><span>code</span></span><span class="token script language-javascript template-string interpolation interpolation-punctuation punctuation" style="color: rgb(137, 221, 255);"><span>}</span></span><span class="token script language-javascript template-string template-punctuation string" style="color: rgb(165, 232, 68);"><span>`</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>15</span></span><span>            
+</span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>16</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript comment" style="color: rgb(97, 97, 97);"><span>// set iframe src</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>17</span></span><span class="token script language-javascript"><span>            </span></span><span class="token script language-javascript dom variable" style="color: rgb(255, 102, 102);"><span>document</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>.</span></span><span class="token script language-javascript method function property-access" style="color: rgb(199, 146, 234);"><span>querySelector</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>(</span></span><span class="token script language-javascript string" style="color: rgb(165, 232, 68);"><span>"#code"</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>)</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>.</span></span><span class="token script language-javascript property-access"><span>src</span></span><span class="token script language-javascript"><span> </span></span><span class="token script language-javascript operator" style="color: rgb(137, 221, 255);"><span>=</span></span><span class="token script language-javascript"><span> url</span></span><span class="token script language-javascript punctuation" style="color: rgb(137, 221, 255);"><span>;</span></span><span class="token script language-javascript"><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>18</span></span><span class="token script language-javascript"><span>        </span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;/</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>script</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span><span class=""><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>19</span></span><span class=""><span>    </span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;/</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>body</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span><span class=""><span>
+</span></span><span class="comment linenumber react-syntax-highlighter-line-number" style="color: rgb(97, 97, 97); display: inline-block; min-width: 2em; padding-right: 1em; text-align: right; user-select: none;"><span>20</span></span><span class=""><span></span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&lt;/</span></span><span class="token tag" style="color: rgb(255, 102, 102);"><span>html</span></span><span class="token tag punctuation" style="color: rgb(137, 221, 255);"><span>&gt;</span></span></code></code></pre></pre>
+        </div>
+    </body>
+</html>
