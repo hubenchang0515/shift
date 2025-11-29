@@ -11,6 +11,13 @@ function makeConfig(code, callback, args=['/tmp/code'], input='') {
     let outputData = [];
     return {
         arguments: [...args],
+        locateFile: (path, scriptDirectory) => {
+            if (path.endsWith(".data")) {
+                return "https://shift-wasm.pages.dev/" + path;
+            } else {
+                return scriptDirectory + path;
+            }
+        },
         preRun: [
             (module) => {
                 module.FS.writeFile(`/tmp/code`, code);
