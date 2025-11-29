@@ -14,8 +14,13 @@
 
   "redirects": [
     {
-      "source": "/shift/wasm/:file",
-      "destination": "https://xplanc-cdn.pages.dev/shift/:file",
+      "source": "/shift/wasm/:file.wasm",
+      "destination": "https://xplanc-cdn.pages.dev/shift/:file.wasm",
+      "permanent": true
+    },
+    {
+      "source": "/shift/wasm/:file.data",
+      "destination": "https://xplanc-cdn.pages.dev/shift/:file.data",
       "permanent": true
     }
   ]
