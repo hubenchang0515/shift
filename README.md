@@ -29,14 +29,14 @@ Click the `SHARE` button to generate and copy the share link.
         <pre id="output"></pre>
         <script type="module">
             // Load module
-            import lua from "https://shift.js.org/wasm/lua.js"                   // interpreter run time
-            import makeConfig from "https://shift.js.org/wasm/common.js"         // interpreter config
+            import lua from "https://shift.js.org/wasm/lua.js";                   // interpreter runtime
+            import makeConfig from "https://shift.js.org/wasm/common.js" ;        // interpreter config
 
             // the code to run
-            const code = "print('hello')"
+            const code = "print('hello')";
 
             // callback to get result
-            const fn = (text) => document.querySelector("#output").innerText=text
+            const fn = (text) => document.querySelector("#output").innerText = text;
 
             // run the code
             lua(makeConfig(code, fn));
@@ -44,6 +44,16 @@ Click the `SHARE` button to generate and copy the share link.
     </body>
 </html>
 ```
+
+| Language    | File                                                              |
+| :-          | :-                                                                |
+| Python      | https://shift.js.org/wasm/python.js                               |
+| JavaScript  | https://shift.js.org/wasm/qjs.js                                  |
+| Lua         | https://shift.js.org/wasm/lua.js                                  |
+| Bash        | https://shift.js.org/wasm/bash.js                                 |
+| Ruby        | https://shift.js.org/wasm/ruby.js                                 |
+| Scheme      | https://shift.js.org/wasm/chibi.js                                |
+| C           | https://shift.js.org/wasm/picoc.js                                |
 
 ### Refer page in `<iframe>`
 
@@ -54,14 +64,14 @@ Click the `SHARE` button to generate and copy the share link.
         <iframe id="code" title="Shift" style="width: 100%; height: 600px; border: 0;"></iframe>
 
         <script>
-            const lang = 'lua'                      // language
-            const input_text = ''                   // data of STDIN
-            const code_text = 'print("hello")'      // code to run
+            const lang = 'lua';                     // language
+            const input_text = '';                  // data of STDIN
+            const code_text = 'print("hello")';     // code to run
 
             // generate URL
-            const input = encodeURIComponent(btoa(encodeURIComponent(input_text)))
-            const code = encodeURIComponent(btoa(encodeURIComponent(code_text)))
-            const url = `https://shift.js.org/#lang=${lang}&input=${input}&code=${code}`
+            const input = encodeURIComponent(btoa(encodeURIComponent(input_text)));
+            const code = encodeURIComponent(btoa(encodeURIComponent(code_text)));
+            const url = `https://shift.js.org/#lang=${lang}&input=${input}&code=${code}`;
             
             // set iframe src
             document.querySelector("#code").src = url;
