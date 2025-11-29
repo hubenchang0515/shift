@@ -13,7 +13,7 @@ function makeConfig(code, callback, args=['/tmp/code'], input='') {
         arguments: [...args],
         locateFile: (path, scriptDirectory) => {
             if (path.endsWith(".data")) {
-                return "https://shift-wasm.pages.dev/" + path;
+                return "https://shift-wasm.pages.dev/wasm/" + path;
             } else {
                 return scriptDirectory + path;
             }
