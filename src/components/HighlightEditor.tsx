@@ -17,9 +17,11 @@ export interface HighlightEditorProps {
 }
 
 export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElement|null>) {
+    const rowsRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const displayRef = useRef<HTMLDivElement>(null);
     const [code, setCode] = useState<string>(" ");
+    const [rows, setRows] = useState(1);
 
     useImperativeHandle(ref, () => displayRef.current);
 
@@ -32,7 +34,22 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
             const result = hljs.highlightAuto(text);
             setCode(result.value);
         }
+        if (rowsRef.current && inputRef.current) {
+            rowsRef.current.scrollTop = inputRef.current.scrollTop;
+        }
     }
+
+    // 生成行号
+    useEffect(() => {
+        setRows(code.split(/\r?\n/).length);
+    }, [code, setRows]);
+
+    // 行号增加后跟随滚动
+    useEffect(() => {
+        if (rowsRef.current && inputRef.current) {
+            rowsRef.current.scrollTop = inputRef.current.scrollTop;
+        }
+    }, [rows]);
 
     // 输入响应
     const refresh = () => {
@@ -82,7 +99,7 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
 
     const commonStyle:CSSProperties = {
         margin: 0,
-        padding: 12,
+        padding: '12px',
         boxSizing: 'border-box',
         overflow: 'auto',
         fontSize: '16px',
@@ -94,61 +111,74 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
     return (
         <Box 
             className={`language-${props.language} hljs`} 
-            sx={props.sx ?? { position: 'relative', width: '100%', overflow:'auto'}}
+            sx={props.sx}
         >
-            <div 
-                ref={displayRef}
-                className={`language-${props.language} hljs code-font`} 
-                style={{
-                    ...commonStyle,
-                    width: '100%', 
-                    height: '100%',
-                    zIndex: 1,
-                }}
-            >
-                <pre 
-                    className="code-font"
-                    style={{
-                        margin: 0,
-                        padding: 0,
-                    }}
-                    dangerouslySetInnerHTML={{__html: code + " "}}
-                />
-            </div>
-
-            <textarea
-                aria-label="code"
-                className="code-font"
-                ref={inputRef}
-                style={{
-                    ...commonStyle,
-                    position:"absolute", 
-                    top: 0, 
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    zIndex: 2,
-                    color: 'transparent',
-                    background: 'transparent',
-                    caretColor: '#0f0',
-                    border: 'none',
-                    outline: 'none',
-                    resize: 'none',
-                    whiteSpace: 'pre',
-                    scrollbarGutter: 'stable',
-                }}
-                wrap="soft"
-                spellCheck="false"
-                autoFocus={false}
-                onChange={refresh}
-                onKeyDown={onKeyDown}
-                onScroll={() => {
-                    if (displayRef.current && inputRef.current) {
-                        displayRef.current.scrollTop = inputRef.current.scrollTop;
-                        displayRef.current.scrollLeft = inputRef.current.scrollLeft;
+            <Box sx={{ width: '100%', height:'100%', overflow:'auto', display:'flex'}}>
+                <Box ref={rowsRef} className='code-font' sx={{...commonStyle, height:'100%',color:'gray', borderRight:'1px solid gray', userSelect:'none', minWidth:'calc(2.25em + 24px)', fontSize:16, overflow:'hidden'}} textAlign='right'>
+                    {
+                        Array(rows||1).fill(0).map((_, i) => <span key={i}>{i+1}<br/></span>)
                     }
-                }}
-            />
+                </Box>
+                <Box sx={{ position: 'relative', flex: 1,  boxSizing:'border-box', overflow:'auto'}}>
+                    <div 
+                        ref={displayRef}
+                        className={`language-${props.language} hljs code-font`} 
+                        style={{
+                            ...commonStyle,
+                            width: '100%', 
+                            height: '100%',
+                            zIndex: 1,
+                        }}
+                    >
+                        <pre 
+                            className="code-font"
+                            style={{
+                                margin: 0,
+                                padding: 0,
+                            }}
+                            dangerouslySetInnerHTML={{__html: code + " "}}
+                        />
+                    </div>
+
+                    <textarea
+                        aria-label="code"
+                        className="code-font"
+                        ref={inputRef}
+                        style={{
+                            ...commonStyle,
+                            position:"absolute", 
+                            top: 0, 
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            zIndex: 2,
+                            color: 'transparent',
+                            background: 'transparent',
+                            caretColor: '#0f0',
+                            border: 'none',
+                            outline: 'none',
+                            resize: 'none',
+                            whiteSpace: 'pre',
+                            scrollbarGutter: 'stable',
+                        }}
+                        wrap="soft"
+                        spellCheck="false"
+                        autoFocus={false}
+                        onChange={refresh}
+                        onKeyDown={onKeyDown}
+                        onScroll={() => {
+                            if (displayRef.current && inputRef.current) {
+                                displayRef.current.scrollTop = inputRef.current.scrollTop;
+                                displayRef.current.scrollLeft = inputRef.current.scrollLeft;
+                            }
+
+                            if (rowsRef.current && inputRef.current) {
+                                rowsRef.current.scrollTop = inputRef.current.scrollTop;
+                            }
+                        }}
+                    />
+                </Box>
+            </Box>
         </Box>
     );
 }
