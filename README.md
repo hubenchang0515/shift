@@ -2,11 +2,11 @@
 
 WebAssembly runtime for Python, Lua, Ruby and etc.
 
+> See [shift-wasm](https://github.com/hubenchang0515/shift-wasm) to get npm package.
+
 ![preview](./preview.png)
 
-## Usage - 使用
-
-### Basic
+## Usage
 
 Select your programming language from the menu in the bottom right corner.
 
@@ -20,90 +20,7 @@ Click the `CLEAR` button or press `Ctrl + L` to clear the terminal.
 
 Click the `SHARE` button to generate and copy the share link.
 
-### ES6 module
-
-```html
-<html>
-    <body>
-        <!-- Create a element to display output -->
-        <pre id="output"></pre>
-        <script type="module">
-            // Load module
-            import lua from "https://shift.js.org/wasm/lua.js";                   // interpreter runtime
-            import makeConfig from "https://shift.js.org/wasm/common.js" ;        // interpreter config
-
-            // the code to run
-            const code = "print('hello')";
-
-            // callback to get result
-            const fn = (text) => document.querySelector("#output").innerText = text;
-
-            // run the code
-            lua(makeConfig(code, fn));
-        </script>
-    </body>
-</html>
-```
-
-| Language    | File                                                              |
-| :-          | :-                                                                |
-| Python      | https://shift.js.org/wasm/python.js                               |
-| JavaScript  | https://shift.js.org/wasm/qjs.js                                  |
-| Lua         | https://shift.js.org/wasm/lua.js                                  |
-| Bash        | https://shift.js.org/wasm/bash.js                                 |
-| Ruby        | https://shift.js.org/wasm/ruby.js                                 |
-| Scheme      | https://shift.js.org/wasm/chibi.js                                |
-| C           | https://shift.js.org/wasm/picoc.js                                |
-
-### Refer page in `<iframe>`
-
-```html
-<html>
-    <body>
-        <!-- iframe to display shift -->
-        <iframe id="code" title="Shift" style="width: 100%; height: 600px; border: 0;"></iframe>
-
-        <script>
-            const lang = 'lua';                     // language
-            const input_text = '';                  // data of STDIN
-            const code_text = 'print("hello")';     // code to run
-
-            // generate URL
-            const input = encodeURIComponent(btoa(encodeURIComponent(input_text)));
-            const code = encodeURIComponent(btoa(encodeURIComponent(code_text)));
-            const url = `https://shift.js.org/#lang=${lang}&input=${input}&code=${code}`;
-            
-            // set iframe src
-            document.querySelector("#code").src = url;
-        </script>
-    </body>
-</html>
-```
-
-## Link - 链接生成
-
-Python:
-
-```python
-import base64
-from urllib.parse import quote
-
-lang = 'python'
-input:str = quote(base64.b64encode(quote(input_text).encode('utf-8')).decode('utf-8'))
-code:str = quote(base64.b64encode(quote(code_text).encode('utf-8')).decode('utf-8'))
-url = f'https://xplanc.org/shift/#lang={lang}&input={input}&code={code}'
-```
-
-JavaScript:
-
-```js
-lang = 'python'
-input = encodeURIComponent(btoa(encodeURIComponent(input_text)))
-code = encodeURIComponent(btoa(encodeURIComponent(code_text)))
-url = `https://xplanc.org/shift/#lang=${lang}&input=${input}&code=${code}`
-```
-
-## Demo - 示例
+## Demo
 * Python
   * [hello](https://xplanc.org/shift/#lang=python&code=aW1wb3J0JTIwcGxhdGZvcm0lMEElMEFwcmludChwbGF0Zm9ybS5weXRob25fdmVyc2lvbigpKQ%3D%3D)
   * [fibonacci](https://xplanc.org/shift/#lang=python&code=ZGVmJTIwZmlib25hY2NpX3JlY3Vyc2l2ZShuKSUzQSUwQSUyMCUyMCUyMCUyMCUyMiUyMiUyMiUwQSUyMCUyMCUyMCUyMCVFNCVCRCVCRiVFNyU5NCVBOCVFOSU4MCU5MiVFNSVCRCU5MiVFOCVBRSVBMSVFNyVBRSU5NyVFNyVBQyVBQyUyMG4lMjAlRTQlQjglQUElRTYlOTYlOTAlRTYlQjMlQTIlRTklODIlQTMlRTUlQTUlOTElRTYlOTUlQjAlRTMlODAlODIlMEElMjAlMjAlMjAlMjAlMEElMjAlMjAlMjAlMjAlM0FwYXJhbSUyMG4lM0ElMjAlRTclQUMlQUMlMjBuJTIwJUU5JUExJUI5JTBBJTIwJTIwJTIwJTIwJTNBcmV0dXJuJTNBJTIwJUU3JUFDJUFDJTIwbiUyMCVFNCVCOCVBQSVFNiU5NiU5MCVFNiVCMyVBMiVFOSU4MiVBMyVFNSVBNSU5MSVFNiU5NSVCMCUwQSUyMCUyMCUyMCUyMCUyMiUyMiUyMiUwQSUyMCUyMCUyMCUyMGlmJTIwbiUyMCUzQyUzRCUyMDAlM0ElMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjByZXR1cm4lMjAwJTBBJTIwJTIwJTIwJTIwZWxpZiUyMG4lMjAlM0QlM0QlMjAxJTNBJTBBJTIwJTIwJTIwJTIwJTIwJTIwJTIwJTIwcmV0dXJuJTIwMSUwQSUyMCUyMCUyMCUyMHJldHVybiUyMGZpYm9uYWNjaV9yZWN1cnNpdmUobiUyMC0lMjAxKSUyMCUyQiUyMGZpYm9uYWNjaV9yZWN1cnNpdmUobiUyMC0lMjAyKSUwQSUwQSUyMyUyMCVFNyVBNCVCQSVFNCVCRSU4QiVFRiVCQyU5QSVFOCVBRSVBMSVFNyVBRSU5NyVFNSU4OSU4RCUyMDEwJTIwJUU5JUExJUI5JTBBTiUyMCUzRCUyMGludChpbnB1dCglMjJQbGVhc2UlMjBJbnB1dCUyME4lM0ElMjAlMjIpKSUwQWZvciUyMGklMjBpbiUyMHJhbmdlKE4pJTNBJTBBJTIwJTIwJTIwJTIwcHJpbnQoZmlib25hY2NpX3JlY3Vyc2l2ZShpKSUyQyUyMGVuZCUzRCUyMiUyMCUyMiklMEFwcmludCglMjIlNUNuJTIyKQ%3D%3D&input=MjA%3D)
