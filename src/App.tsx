@@ -176,10 +176,18 @@ function App() {
                     (module:any) => {
                         module.FS.writeFile(`/tmp/code`, code);
                         const encoder = new TextEncoder();
-                        const bytes = encoder.encode(input);
+                        let bytes = encoder.encode(input);
                         let i = 0;
 
+                        // 如果首次调用 stdin 就返回 null，则立即结束输入
+                        // 如果首次调用 stdin 时返回了数据，则需要返回两次 null 才能结束输入
+                        // 原因不明
                         function stdin() {
+                            // 如果没有数据，则通过 window.prompt() 请求输入
+                            if (bytes.length === 0) {
+                                bytes = encoder.encode(window.prompt()??"");
+                            }
+
                             if (i < bytes.length) {
                                 const utf8Code = bytes[i];
                                 output.push(utf8Code)
@@ -188,9 +196,11 @@ function App() {
                             } else if (i == bytes.length) {
                                 output.push(10);
                                 i += 1;
-                                return null
+                                return null;
                             } else {
-                                return null
+                                bytes = new Uint8Array();
+                                i = 0;
+                                return null; // 第二次返回 null
                             }
                         }
 
