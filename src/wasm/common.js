@@ -3,11 +3,11 @@
  * @param args command line args, default
  * @param {string} code the code t orun
  * @param {(string)=>void} callback callback of output
- * @param {string[]} args command line args, default ['/tmp/code']
  * @param {string} input string data of STDIN, default '' (empty)
+ * @param {string[]} args command line args, default ['/tmp/code']
  * @returns the config
  */
-function makeConfig(code, callback, args=['/tmp/code'], input='') {
+function makeConfig(code, callback, input='', args=['/tmp/code']) {
     let outputData = [];
     return {
         arguments: [...args],
@@ -28,13 +28,8 @@ function makeConfig(code, callback, args=['/tmp/code'], input='') {
                 function stdin() {
                     if (i < bytes.length) {
                         const utf8Code = bytes[i];
-                        outputData.push(utf8Code)
                         i += 1;
                         return utf8Code
-                    } else if (i == bytes.length) {
-                        outputData.push(10);
-                        i += 1;
-                        return null
                     } else {
                         return null
                     }
