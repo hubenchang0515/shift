@@ -185,7 +185,9 @@ function App() {
                         function stdin() {
                             // 如果没有数据，则通过 window.prompt() 请求输入
                             if (bytes.length === 0) {
-                                bytes = encoder.encode(window.prompt()??"");
+                                const lines = new TextDecoder('utf-8').decode(new Uint8Array(output)).split('\n');
+                                const msg = lines.length > 0 ? lines[lines.length - 1] : ""
+                                bytes = encoder.encode(window.prompt(msg||"STDIN")??"");
                             }
 
                             if (i < bytes.length) {
