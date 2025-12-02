@@ -296,7 +296,7 @@ function App() {
 
         term.write(new Uint8Array([27, 91, 51, 56, 59, 50, 59, 49, 48, 50, 59, 50, 48, 52, 59, 50, 53, 53, 109]));
         term.write(`Copyright (c) ${new Date().getFullYear()} Plan C (https://xplanc.org)\n`);
-        term.write(`See help in ${window.location.origin}${window.location.pathname}usage.html`);
+        term.write(`See help in ${window.location.origin}${import.meta.env.BASE_URL}usage.html`);
         term.write(new Uint8Array([27, 91, 48, 109, 10]));
         setTerminal(term);
 
