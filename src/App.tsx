@@ -288,6 +288,8 @@ function App() {
             letterSpacing: 0,
         });
 
+        term.attachCustomKeyEventHandler(()=>false); // xterm 不处理快捷键
+
         const fitAddon = new FitAddon();
         term.loadAddon(fitAddon);
         term.loadAddon(new WebLinksAddon());
