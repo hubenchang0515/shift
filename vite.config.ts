@@ -34,9 +34,9 @@ export default defineConfig({
         enabled: true,
       },
       workbox: {
+        skipWaiting: true,
         maximumFileSizeToCacheInBytes: 32 * 1024 ** 2, // 32 MB or set to something else
-        globPatterns: ['**/*.{js,css,ttf}'],
-        navigateFallback: '/index.html',
+        globPatterns: ['**/*.{html,js,css}'],
         runtimeCaching: [
           {
             urlPattern: ()=>true,
