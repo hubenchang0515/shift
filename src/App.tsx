@@ -12,8 +12,8 @@ import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import './assets/font.css';
 import { blue, pink } from '@mui/material/colors';
-import Loading from './components/Loading.js';
-import { wrapFetch } from './fetch.js';
+import Loading from './components/Loading';
+import { wrapFetch } from './utils/fetch';
 
 // @ts-ignore
 import lua from './wasm/lua.js';
@@ -186,8 +186,8 @@ function App() {
                             // 如果没有数据，则通过 window.prompt() 请求输入
                             if (bytes.length === 0) {
                                 const lines = new TextDecoder('utf-8').decode(new Uint8Array(output)).split('\n');
-                                const msg = lines.length > 0 ? lines[lines.length - 1] : ""
-                                bytes = encoder.encode(window.prompt(msg||"STDIN")??"");
+                                const msg = lines.length > 0 ? lines[lines.length - 1] : "STDIN"
+                                bytes = encoder.encode(window.prompt(msg)??"");
                             }
 
                             if (i < bytes.length) {
