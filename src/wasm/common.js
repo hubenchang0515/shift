@@ -50,10 +50,12 @@ function makeConfig(code, callback, input='', args=['/tmp/code']) {
 
                 function stdout(utf8Code) {
                     stdoutData.push(utf8Code);
+                    mixData.push(utf8Code);
                 }
 
                 function stderr(utf8Code) {
                     stderrData.push(utf8Code);
+                    mixData.push(utf8Code);
                 }
 
                 module.FS.init(stdin, stdout, stderr);
