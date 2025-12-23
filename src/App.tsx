@@ -287,6 +287,14 @@ function App() {
             allowProposedApi: true, 
             fontFamily:'"Maple Mono CN", Consolas, Monaco, monospace',
             letterSpacing: 0,
+            linkHandler: {
+                activate(ev, text) {
+                    if (ev.button !== 0)  // 判断左键
+                        return;
+
+                    window.open(text);
+                }
+            }
         });
 
         term.attachCustomKeyEventHandler(()=>false); // xterm 不处理快捷键
