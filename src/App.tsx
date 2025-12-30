@@ -20,6 +20,7 @@ import Loading from './components/Loading';
 import { wrapFetch } from './utils/fetch';
 import { installFromPyPI, uninstallFromPyPI } from './utils/webpip';
 import { createPypiProxyFetch } from './utils/pypiProxy';
+import { createLink, createRgb } from './utils/ansi.js';
 
 // @ts-ignore
 import lua from './wasm/lua.js';
@@ -547,6 +548,14 @@ function App() {
             allowProposedApi: true, 
             fontFamily:'"Maple Mono CN", Consolas, Monaco, monospace',
             letterSpacing: 0,
+            linkHandler: {
+                activate(ev, text) {
+                    if (ev.button !== 0)  // 判断左键
+                        return;
+
+                    window.open(text);
+                }
+            }
         });
 
         term.attachCustomKeyEventHandler(()=>false); // xterm 不处理快捷键
@@ -556,11 +565,12 @@ function App() {
         term.loadAddon(new WebLinksAddon());
         term.open(termDivRef.current);
         fitAddon.fit();
-
-        term.write(new Uint8Array([27, 91, 51, 56, 59, 50, 59, 49, 48, 50, 59, 50, 48, 52, 59, 50, 53, 53, 109]));
-        term.write(`Copyright (c) ${new Date().getFullYear()} Plan C (https://xplanc.org)\n`);
-        term.write(`See help in ${window.location.origin}${import.meta.env.BASE_URL}usage.html`);
-        term.write(new Uint8Array([27, 91, 48, 109, 10]));
+        
+        term.write(createRgb(`Copyright (C) ${new Date().getFullYear()} `, 102, 204, 255));
+        term.write(createRgb(createLink('Plan C', 'https://xplanc.org/'), 57, 197, 187));
+        term.write(createRgb(`, See help `, 102, 204, 255));
+        term.write(createRgb(createLink('here', `${window.location.origin}${import.meta.env.BASE_URL}usage.html`), 57, 197, 187));
+        term.write(createRgb(`.\n`, 102, 204, 255));
         setTerminal(term);
 
         // 封装 fetch
