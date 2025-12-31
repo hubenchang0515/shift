@@ -31,7 +31,8 @@ export default defineConfig({
         ],
       },
       devOptions: {
-        enabled: true,
+        // Disable PWA in dev to avoid stale cache while iterating.
+        enabled: false,
       },
       workbox: {
         skipWaiting: true,
@@ -39,7 +40,8 @@ export default defineConfig({
         globPatterns: ['**/*.{html,js,css}'],
         runtimeCaching: [
           {
-            urlPattern: ()=>true,
+            // Cache CDN assets only; avoid caching app/API responses (can cause "old page" after refresh).
+            urlPattern: ({ url }) => url.hostname === 'cdn.xplanc.org',
             handler: "CacheFirst",
             options: {
               cacheName: 'xplanc-cdn-cache',
