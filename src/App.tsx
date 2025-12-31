@@ -1,26 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Alert, AlertProps, Box, Button, Collapse, createTheme, CssBaseline, FormControl, IconButton, Input, InputAdornment, MenuItem, Paper, Select, Snackbar, ThemeProvider, Tooltip, Typography } from '@mui/material'
+import { Alert, AlertProps, Box, Button, Collapse, createTheme, CssBaseline, FormControl, IconButton, Input, InputAdornment, MenuItem, Paper, Select, Snackbar, ThemeProvider, Tooltip } from '@mui/material'
 import HighlightEditor from './components/HighlightEditor'
 import { Terminal } from '@xterm/xterm';
 import '@xterm/xterm/css/xterm.css';
 import { FitAddon } from '@xterm/addon-fit';
 import { WebLinksAddon } from '@xterm/addon-web-links';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import RefreshIcon from '@mui/icons-material/Refresh';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import DeleteIcon from '@mui/icons-material/Delete';
+import InstallDesktopIcon from '@mui/icons-material/InstallDesktop';
 import './assets/font.css';
 import { blue, pink } from '@mui/material/colors';
 import Loading from './components/Loading';
 import { wrapFetch } from './utils/fetch';
-import { installFromPyPI, uninstallFromPyPI } from './utils/webpip';
-import { createPypiProxyFetch } from './utils/pypiProxy';
-import { createLink, createRgb } from './utils/ansi.js';
+import { createLink, createRgb } from './utils/ansi';
+import PipInstaller from './components/PipInstaller';
 
 // @ts-ignore
 import lua from './wasm/lua.js';
@@ -36,9 +32,7 @@ import chibi from './wasm/chibi.js';
 import bash from './wasm/bash.js';
 // @ts-ignore
 import qjs from './wasm/qjs.js';
-
-const PYTHON_VERSION = "3.13.1+";
-const proxyFetch = createPypiProxyFetch();
+import { mountPipPackages } from './utils/pipfs.js';
 
 const LANGUAGES = [
     {
@@ -102,24 +96,17 @@ function App() {
     const [input, setInput] = useState<string>("");
     const [open, setOpen] = useState(true);
 
-    const [pipPanelOpen, setPipPanelOpen] = useState(true);
-    const [pipPackageName, setPipPackageName] = useState<string>("");
-    const [pipInstalling, setPipInstalling] = useState(false);
-    const [pipRemoving, setPipRemoving] = useState(false);
-    const [pipStatus, setPipStatus] = useState<string>("");
-    const [pipInstalled, setPipInstalled] = useState<Array<{name:string; version?:string}>>([]);
-    const [pipInstalledLoading, setPipInstalledLoading] = useState(false);
-
-    const pipInstallerModuleRef = useRef<any>(null);
-    const pipInstallerModulePromiseRef = useRef<Promise<any> | null>(null);
-
     const [message, setMessage] = useState("");
     const [messageSeverity, setMessageSeverity] = useState<AlertProps['severity']>('error');
     const [messageOpen, setMessageOpen] = useState(false);
 
     const [running, setRunning] = useState(false);
-
     const [firstRun, setFirstRun] = useState(false);
+
+    const [showPip, setShowPip] = useState(false);
+    const togglePip = useCallback(() => {
+        setShowPip((v)=>!v);
+    }, [showPip]);
 
     // 设置 noindex
     useEffect(() => {
@@ -134,6 +121,14 @@ function App() {
                 meta.remove();
             }
         }
+    }, []);
+
+    const [installPrompt, setInstallPrompt] = useState<any>(null);
+    useEffect(() => {
+        window.addEventListener("beforeinstallprompt", (event) => {
+            event.preventDefault();
+            setInstallPrompt(event);
+        });
     }, []);
 
     // 复制分享链接
@@ -165,235 +160,7 @@ function App() {
         }
     }, [language, input, code]);
 
-    const locateWasmFile = useCallback((path: string, scriptDirectory: string) => {
-        if (path.endsWith(".data") || path.endsWith(".wasm")) {
-            return import.meta.env.BASE_URL + "wasm/" + path;
-        }
-        return scriptDirectory + path;
-    }, []);
-
-    const ensurePythonPackages = useCallback((module: any, populate: boolean) => {
-        const FS = module.FS;
-        FS.mkdirTree("/packages");
-
-        const IDBFS = FS.filesystems?.IDBFS;
-        if (IDBFS) {
-            try {
-                FS.mount(IDBFS, {}, "/packages");
-            } catch {
-                // ignore mount errors (e.g. already mounted)
-            }
-
-            const depId = `idbfs:${populate}:${Date.now()}`;
-            module.addRunDependency?.(depId);
-            try {
-                FS.syncfs(populate, (err: any) => {
-                    if (err) {
-                        console.error(err);
-                    }
-                    module.removeRunDependency?.(depId);
-                });
-            } catch (err) {
-                console.error(err);
-                module.removeRunDependency?.(depId);
-            }
-        }
-
-        try {
-            FS.mkdirTree("/usr/local/lib/python3.13");
-            FS.writeFile(
-                "/usr/local/lib/python3.13/sitecustomize.py",
-                "import sys\nsys.path.insert(0, '/packages')\n",
-            );
-        } catch (err) {
-            console.error(err);
-        }
-    }, []);
-
-    const syncfs = useCallback((module: any, populate: boolean) => {
-        return new Promise<void>((resolve, reject) => {
-            module.FS.syncfs(populate, (err: any) => {
-                if (err) reject(err);
-                else resolve();
-            });
-        });
-    }, []);
-
-    const getPipInstallerModule = useCallback(async () => {
-        if (pipInstallerModuleRef.current) return pipInstallerModuleRef.current;
-        if (pipInstallerModulePromiseRef.current) return pipInstallerModulePromiseRef.current;
-
-        pipInstallerModulePromiseRef.current = python({
-            noInitialRun: true,
-            locateFile: locateWasmFile,
-            ENV: {
-                PYTHONPATH: "/packages",
-            },
-            preRun: [
-                (module: any) => {
-                    ensurePythonPackages(module, true);
-                }
-            ],
-        }).then((module: any) => {
-            pipInstallerModuleRef.current = module;
-            return module;
-        });
-
-        return pipInstallerModulePromiseRef.current;
-    }, [ensurePythonPackages, locateWasmFile]);
-
-    const loadInstalledPackages = useCallback(async () => {
-        if (language !== "python") return;
-
-        setPipInstalledLoading(true);
-        try {
-            const module = await getPipInstallerModule();
-
-            if (module?.FS?.filesystems?.IDBFS) {
-                await syncfs(module, true);
-            }
-
-            const FS = module.FS;
-            const entries: string[] = FS.readdir("/packages");
-            const distInfos = entries.filter((e) => e !== "." && e !== ".." && e.endsWith(".dist-info"));
-
-            const pkgs: Array<{name:string; version?:string}> = [];
-            for (const distInfo of distInfos) {
-                let name: string | undefined;
-                let version: string | undefined;
-                try {
-                    const bytes = FS.readFile(`/packages/${distInfo}/METADATA`);
-                    const text = new TextDecoder("utf-8").decode(bytes);
-                    for (const line of text.split(/\r?\n/)) {
-                        if (!name && line.startsWith("Name:")) name = line.slice("Name:".length).trim();
-                        if (!version && line.startsWith("Version:")) version = line.slice("Version:".length).trim();
-                        if (name && version) break;
-                    }
-                } catch {
-                    // ignore metadata read failures
-                }
-
-                pkgs.push({ name: name ?? distInfo.replace(/\\.dist-info$/, ""), version });
-            }
-
-            const uniq = new Map<string, {name:string; version?:string}>();
-            for (const p of pkgs) {
-                const key = p.name.toLowerCase();
-                if (!uniq.has(key)) uniq.set(key, p);
-            }
-
-            setPipInstalled([...uniq.values()].sort((a, b) => a.name.localeCompare(b.name)));
-        } catch (err: any) {
-            setPipInstalled([]);
-            setMessageSeverity("error");
-            setMessage(err?.message ?? "Failed to load installed packages.");
-            setMessageOpen(true);
-        } finally {
-            setPipInstalledLoading(false);
-        }
-    }, [getPipInstallerModule, language, syncfs]);
-
-    const installPipPackage = useCallback(async () => {
-        if (language !== "python") return;
-        if (pipRemoving) return;
-        const name = pipPackageName.trim();
-        if (!name) return;
-
-        setPipInstalling(true);
-        setPipStatus("");
-        try {
-            const module = await getPipInstallerModule();
-
-            if (!module?.FS?.filesystems?.IDBFS) {
-                setMessageSeverity("error");
-                setMessage("IDBFS not available; packages will not persist.");
-                setMessageOpen(true);
-            }
-
-            await syncfs(module, true);
-
-            await installFromPyPI({
-                module,
-                name,
-                pythonVersion: PYTHON_VERSION,
-                destRoot: "/packages",
-                withDeps: true,
-                proxyFetch,
-                onProgress: (msg) => {
-                    setPipStatus(msg);
-                    terminal?.write(`${msg}\n`);
-                },
-            });
-
-            if (module?.FS?.filesystems?.IDBFS) {
-                await syncfs(module, false);
-            }
-
-            setMessageSeverity("success");
-            setMessage(`Installed: ${name}`);
-            setMessageOpen(true);
-            loadInstalledPackages();
-        } catch (err: any) {
-            setMessageSeverity("error");
-            setMessage(err?.message ?? "Install failed.");
-            setMessageOpen(true);
-        } finally {
-            setPipInstalling(false);
-        }
-    }, [getPipInstallerModule, language, pipPackageName, pipRemoving, syncfs, terminal, loadInstalledPackages]);
-
-    const uninstallPipPackage = useCallback(async (pkgName: string) => {
-        if (language !== "python") return;
-        if (pipInstalling || pipRemoving) return;
-        const name = pkgName.trim();
-        if (!name) return;
-
-        setPipRemoving(true);
-        setPipStatus("");
-        try {
-            const module = await getPipInstallerModule();
-
-            if (!module?.FS?.filesystems?.IDBFS) {
-                setMessageSeverity("error");
-                setMessage("IDBFS not available; packages will not persist.");
-                setMessageOpen(true);
-            }
-
-            await syncfs(module, true);
-
-            await uninstallFromPyPI({
-                module,
-                name,
-                destRoot: "/packages",
-                withDeps: true,
-                onProgress: (msg) => {
-                    setPipStatus(msg);
-                    terminal?.write(`${msg}\n`);
-                },
-            });
-
-            if (module?.FS?.filesystems?.IDBFS) {
-                await syncfs(module, false);
-            }
-
-            setMessageSeverity("success");
-            setMessage(`Uninstalled: ${name}`);
-            setMessageOpen(true);
-            loadInstalledPackages();
-        } catch (err: any) {
-            setMessageSeverity("error");
-            setMessage(err?.message ?? "Uninstall failed.");
-            setMessageOpen(true);
-        } finally {
-            setPipRemoving(false);
-        }
-    }, [getPipInstallerModule, language, loadInstalledPackages, pipInstalling, pipRemoving, syncfs, terminal]);
-
-    useEffect(() => {
-        if (language === "python") {
-            loadInstalledPackages();
-        }
-    }, [language, loadInstalledPackages]);
+    const ensurePythonPackages = useCallback(mountPipPackages, []);
 
     // 运行代码
     const execute = useCallback((args:any[]) => {
@@ -408,15 +175,24 @@ function App() {
         }
 
         if (interpreter === null) {
-            terminal?.write(`不支持运行 ${language}`)
+            terminal?.write(`Does not support running ${language}`)
         }
         setRunning(true);
 
         const task = () => {
             let output:number[] = []
-            const config:any = {
+            interpreter?.({
                 arguments: [...preargs, ...args],
-                locateFile: locateWasmFile,
+                ENV: {
+                    PYTHONPATH: "/packages",
+                },
+                locateFile: (path:string, scriptDirectory:string) => {
+                    if (path.endsWith(".data") || path.endsWith(".wasm")) {
+                        return import.meta.env.BASE_URL + "wasm/" + path;
+                    } else {
+                        return scriptDirectory + path;
+                    }
+                },
                 preRun: [
                     (module:any) => {
                         if (language === "python") {
@@ -472,25 +248,11 @@ function App() {
                         setRunning(false);
                     }
                 ],
-            };
-
-            if (language === "python") {
-                config.ENV = {
-                    PYTHONPATH: "/packages",
-                };
-            }
-
-            const result = interpreter?.(config);
-            if (result && typeof result.then === "function") {
-                result.catch((err:any) => {
-                    terminal?.write(String(err) + "\n");
-                    setRunning(false);
-                });
-            }
+            });
         };
 
         queueMicrotask(task);
-    }, [terminal, language, code, input, locateWasmFile, ensurePythonPackages]);
+    }, [terminal, language, code, input]);
 
     // 带参数的 URL 初始化
     useEffect(() => {
@@ -612,9 +374,6 @@ function App() {
         },
     });
 
-    const showPipPanel = language === "python";
-    const pipPanelWidth = 280;
-
     return (
         <ThemeProvider theme={darkTheme}>
             <CssBaseline />
@@ -637,255 +396,97 @@ function App() {
                         {message}
                     </Alert>
                 </Snackbar>
-                <Box sx={{flex:1, display:'flex', minHeight:0}}>
-                    {
-                        showPipPanel ?
-                        <Box sx={{height:'100%', display:'flex', flexShrink:0}}>
-                            <Collapse in={pipPanelOpen} orientation="horizontal" sx={{display:'flex'}}>
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        width: pipPanelWidth,
-                                        height: '100%',
-                                        borderRadius: 0,
-                                        backgroundColor: '#2E3440',
-                                        borderRight: '1px solid rgba(255,255,255,0.12)',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                    }}
-                                >
-                                    <Box
-                                        sx={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            px: 1,
-                                            py: 0.75,
-                                            borderBottom: '1px solid rgba(255,255,255,0.12)',
-                                        }}
-                                    >
-                                        <Typography variant="subtitle2">pip packages</Typography>
-                                        <Tooltip title="Collapse" arrow placement="right">
-                                            <IconButton
-                                                size="small"
-                                                onClick={() => setPipPanelOpen(false)}
-                                                aria-label="collapse pip packages"
-                                            >
-                                                <KeyboardArrowLeftIcon />
-                                            </IconButton>
-                                        </Tooltip>
-                                    </Box>
-
-                                    <Box sx={{flex:1, overflow:'auto', p:1}}>
-                                        <Box sx={{display:'flex', flexDirection:'column', gap:1}}>
-                                            <Input
-                                                fullWidth
-                                                placeholder="包名，例如 faker"
-                                                value={pipPackageName}
-                                                onChange={(ev)=>setPipPackageName(ev.target.value)}
-                                                onKeyDown={(ev)=>{
-                                                    if (ev.key === 'Enter') {
-                                                        installPipPackage();
-                                                    }
-                                                }}
-                                            />
-                                            <Button
-                                                variant="contained"
-                                                color="secondary"
-                                                onClick={installPipPackage}
-                                                loading={pipInstalling}
-                                                loadingIndicator={<Loading size={18} value={100} thickness={4}/>}
-                                                disabled={!pipPackageName.trim() || pipRemoving}
-                                            >
-                                                安装
-                                            </Button>
-                                            {
-                                                pipStatus ?
-                                                <Typography variant="caption" color="text.secondary">
-                                                    {pipStatus}
-                                                </Typography>
-                                                : <></>
-                                            }
-                                            <Typography variant="caption" color="text.secondary">
-                                                仅支持 universal wheel（`*-py3-none-any.whl`）。
-                                            </Typography>
-
-                                            <Box sx={{display:'flex', alignItems:'center', justifyContent:'space-between', mt:1}}>
-                                                <Typography variant="caption" color="text.secondary">
-                                                    已安装 ({pipInstalled.length})
-                                                </Typography>
-                                                <Tooltip title="Refresh" arrow placement="right">
-                                                    <span>
-                                                        <IconButton
-                                                            size="small"
-                                                            onClick={loadInstalledPackages}
-                                                            disabled={pipInstalledLoading}
-                                                            aria-label="refresh installed packages"
-                                                        >
-                                                            <RefreshIcon fontSize="inherit" />
-                                                        </IconButton>
-                                                    </span>
-                                                </Tooltip>
-                                            </Box>
-                                            <Paper variant="outlined" sx={{p:1, backgroundColor:'rgba(0,0,0,0.15)'}}>
-                                                {
-                                                    pipInstalledLoading ?
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        Loading...
-                                                    </Typography>
-                                                    : pipInstalled.length === 0 ?
-                                                    <Typography variant="body2" color="text.secondary">
-                                                        No packages installed.
-                                                    </Typography>
-                                                    :
-                                                    <Box sx={{display:'flex', flexDirection:'column', gap:0.5}}>
-                                                        {
-                                                            pipInstalled.map((p) => (
-                                                                <Box key={p.name} sx={{display:'flex', alignItems:'center', justifyContent:'space-between', gap:1}}>
-                                                                    <Typography variant="body2" sx={{lineHeight:1.4}}>
-                                                                        {p.name}{p.version ? `==${p.version}` : ""}
-                                                                    </Typography>
-                                                                    <Tooltip title="Uninstall" arrow placement="left">
-                                                                        <span>
-                                                                            <IconButton
-                                                                                size="small"
-                                                                                onClick={() => uninstallPipPackage(p.name)}
-                                                                                disabled={pipInstalling || pipRemoving}
-                                                                                aria-label={`uninstall ${p.name}`}
-                                                                            >
-                                                                                <DeleteIcon fontSize="inherit" />
-                                                                            </IconButton>
-                                                                        </span>
-                                                                    </Tooltip>
-                                                                </Box>
-                                                            ))
-                                                        }
-                                                    </Box>
-                                                }
-                                            </Paper>
-                                        </Box>
-                                    </Box>
-                                </Paper>
-                            </Collapse>
-
-                            {
-                                pipPanelOpen ? <></> :
-                                <Box
-                                    sx={{
-                                        height: '100%',
-                                        backgroundColor: '#2E3440',
-                                        borderRight: '1px solid rgba(255,255,255,0.12)',
-                                        pt: 0.75,
-                                        px: 0.5,
-                                    }}
-                                >
-                                    <Tooltip title="pip packages" arrow placement="right">
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => setPipPanelOpen(true)}
-                                            aria-label="expand pip packages"
-                                        >
-                                            <KeyboardArrowRightIcon />
-                                        </IconButton>
-                                    </Tooltip>
+                <Box sx={{flex:1, overflow:'hidden', display:'flex'}}>
+                    <Collapse orientation="horizontal" in={showPip && language === 'python'}>
+                        <PipInstaller language={language} onMessage={(message)=>terminal?.write(message)} onClose={()=>setShowPip(false)}/>
+                    </Collapse>
+                    <HighlightEditor ref={editRef} language={language} sx={{position:'relative', overflow:'auto', flex:1}} text={code} onChange={(text)=>setCode(text)}/>
+                </Box>
+                <Box sx={{position:'relative', zIndex:10}}>
+                    <div ref={termDivRef} className='code fix-xterm' style={{background:'#000', height:300}}></div>
+                    <Box sx={{position:'absolute', bottom:8, right:8, display:'flex', flexDirection:'column'}}>
+                        <IconButton onClick={()=>{setOpen(!open)}} sx={{color:'#fff', alignSelf:'center'}} aria-label="collapse">
+                            {open ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
+                        </IconButton>
+                        <Collapse in={open}>
+                            <Box sx={{display:'flex', flexDirection:'column', gap:1, alignSelf:'flex-end'}}>
+                                <Box sx={{display:'flex', gap:1}}>
+                                    <Button size='small' variant='contained' color='inherit' aria-label='github' href='https://github.com/hubenchang0515/shift' target='_blank' sx={{flex:1}}><GitHubIcon/></Button>
+                                    { installPrompt && <Button size='small' variant='contained' color='inherit' disabled={!navigator?.clipboard?.writeText} onClick={()=>{(installPrompt as any).prompt()}}><InstallDesktopIcon/></Button> }
                                 </Box>
-                            }
-                        </Box>
-                        :
-                        <></>
-                    }
+                                {language === 'python' ? <Button size='small' variant='contained' color='inherit' disabled={!navigator?.clipboard?.writeText} onClick={togglePip}>PIP</Button> : <></>}
+                                <Paper>
+                                    <FormControl fullWidth variant="standard">
+                                        <Select
+                                            value={language}
+                                            onChange={(ev)=>setLanguage(ev.target.value)}
+                                            sx={{paddingX:1, minWidth:'8em'}}
+                                            inputProps={{
+                                                "aria-label": "language"
+                                            }}
+                                        >
+                                            {
+                                                LANGUAGES.map((item, index) => {
+                                                    return <MenuItem key={index} value={item.name}>{item.label}</MenuItem>
+                                                })
+                                            }
 
-                    <Box sx={{display:'flex', flexDirection:'column', flex:1, minWidth:0}}>
-                        <HighlightEditor
-                            ref={editRef}
-                            language={language}
-                            sx={{position:'relative', overflow:'auto', flex:1, minHeight:0}}
-                            text={code}
-                            onChange={(text)=>setCode(text)}
-                        />
-                        <Box sx={{position:'relative', zIndex:10}}>
-                            <div ref={termDivRef} className='code fix-xterm' style={{background:'#000', height:300}}></div>
-                            <Box sx={{position:'absolute', bottom:8, right:8, display:'flex', flexDirection:'column'}}>
-                                <IconButton onClick={()=>{setOpen(!open)}} sx={{color:'#fff', alignSelf:'center'}} aria-label="collapse">
-                                    {open ? <KeyboardArrowDownIcon/> : <KeyboardArrowUpIcon/>}
-                                </IconButton>
-                                <Collapse in={open}>
-                                    <Box sx={{display:'flex', flexDirection:'column', gap:1, alignSelf:'flex-end'}}>
-                                        <Button size='small' variant='contained' color='inherit' aria-label='github' href='https://github.com/hubenchang0515/shift' target='_blank'><GitHubIcon/></Button>
-                                        <Paper>
-                                        <FormControl fullWidth variant="standard">
-                                            <Select
-                                                value={language}
-                                                onChange={(ev)=>setLanguage(ev.target.value)}
-                                                sx={{paddingX:1, minWidth:'8em'}}
-                                                inputProps={{
-                                                    "aria-label": "language"
-                                                }}
-                                            >
-                                                {
-                                                    LANGUAGES.map((item, index) => {
-                                                        return <MenuItem key={index} value={item.name}>{item.label}</MenuItem>
-                                                    })
-                                                }
-
-                                                {
-                                                    LANGUAGES.some(item=>item.name===language) ? <></> :
-                                                    <MenuItem key={language} value={language}>{language}</MenuItem>
-                                                }
-                                            </Select>
-                                        </FormControl>
-                                        </Paper>
-                                        <Button variant='contained' color='inherit' disabled={!navigator?.clipboard?.writeText} onClick={share}>SHARE</Button>
-                                        <Tooltip title="Ctrl + L" arrow placement='left'>
-                                            <Button size='small' variant='contained' color='secondary' onClick={()=>{terminal?.reset();}}>CLEAR</Button>
-                                        </Tooltip>
-                                        <Tooltip title="Ctrl + S"arrow placement='left'>
-                                            <Button 
-                                                size='small' 
-                                                variant='contained' 
-                                                onClick={()=>{execute(["/tmp/code"]);}} 
-                                                loading={running}
-                                                loadingIndicator={<Loading size={20} value={100} thickness={4}/>}
-                                            >
-                                                RUN
-                                            </Button>
-                                        </Tooltip>
-                                    </Box>
-                                </Collapse>
+                                            {
+                                                LANGUAGES.some(item=>item.name===language) ? <></> :
+                                                <MenuItem key={language} value={language}>{language}</MenuItem>
+                                            }
+                                        </Select>
+                                    </FormControl>
+                                </Paper>
+                                <Button size='small' variant='contained' color='inherit' disabled={!navigator?.clipboard?.writeText} onClick={share}>SHARE</Button>
+                                <Tooltip title="Ctrl + L" arrow placement='left'>
+                                    <Button size='small' variant='contained' color='secondary' onClick={()=>{terminal?.reset();}}>CLEAR</Button>
+                                </Tooltip>
+                                <Tooltip title="Ctrl + S"arrow placement='left'>
+                                    <Button 
+                                        size='small' 
+                                        variant='contained' 
+                                        onClick={()=>{execute(["/tmp/code"]);}} 
+                                        loading={running}
+                                        loadingIndicator={<Loading size={20} value={100} thickness={4}/>}
+                                    >
+                                        RUN
+                                    </Button>
+                                </Tooltip>
                             </Box>
-                        </Box>
-                        <Input 
-                            fullWidth 
-                            sx={{
-                                backgroundColor: 'white',
-                                color: 'black',
-                                borderTop: '1px solid white',
-                            }}
-                            startAdornment={
-                                <InputAdornment position="start">
-                                    <TerminalIcon sx={{color:'black'}}/>
-                                </InputAdornment>
-                            }
-                            endAdornment={
-                                <InputAdornment position="end">
-                                    <IconButton  aria-label="run" onClick={() => execute(["/tmp/code"])}>
-                                        <KeyboardReturnIcon sx={{color:'black'}}/>
-                                    </IconButton>
-                                </InputAdornment>
-                            }
-                            placeholder='STDIN'
-                            value={input} 
-                            onChange={(ev)=>{
-                                setInput(ev.target.value);
-                            }}
-                            onKeyDown={(ev)=>{
-                                if (ev.key === 'Enter') {
-                                    execute(["/tmp/code"]);
-                                }
-                            }}
-                        />
+                        </Collapse>
                     </Box>
                 </Box>
+                <Input 
+                    fullWidth 
+                    sx={{
+                        backgroundColor: 'white',
+                        color: 'black',
+                        borderTop: '1px solid white',
+                    }}
+                    startAdornment={
+                        <InputAdornment position="start">
+                            <TerminalIcon sx={{color:'black'}}/>
+                        </InputAdornment>
+                    }
+                    endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton  aria-label="run" onClick={() => execute(["/tmp/code"])}>
+                                <KeyboardReturnIcon sx={{color:'black'}}/>
+                            </IconButton>
+                        </InputAdornment>
+                    }
+                    placeholder='STDIN'
+                    value={input} 
+                    onChange={(ev)=>{
+                        setInput(ev.target.value);
+                    }}
+                    onKeyDown={(ev)=>{
+                        if (ev.key === 'Enter') {
+                            execute(["/tmp/code"]);
+                        }
+                    }}
+                />
             </Box>
         </ThemeProvider>
     )

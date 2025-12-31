@@ -31,17 +31,15 @@ export default defineConfig({
         ],
       },
       devOptions: {
-        // Disable PWA in dev to avoid stale cache while iterating.
         enabled: false,
       },
       workbox: {
         skipWaiting: true,
-        maximumFileSizeToCacheInBytes: 32 * 1024 ** 2, // 32 MB or set to something else
+        maximumFileSizeToCacheInBytes: 32 * 1024 ** 2,
         globPatterns: ['**/*.{html,js,css}'],
         runtimeCaching: [
           {
-            // Cache CDN assets only; avoid caching app/API responses (can cause "old page" after refresh).
-            urlPattern: ({ url }) => url.hostname === 'cdn.xplanc.org',
+            urlPattern: ({ url }) => url.pathname.endsWith('.wasm') || url.pathname.endsWith('.data'),
             handler: "CacheFirst",
             options: {
               cacheName: 'xplanc-cdn-cache',
