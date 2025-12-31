@@ -10,11 +10,13 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import GitHubIcon from '@mui/icons-material/GitHub';
+import InstallDesktopIcon from '@mui/icons-material/InstallDesktop';
 import './assets/font.css';
 import { blue, pink } from '@mui/material/colors';
 import Loading from './components/Loading';
 import { wrapFetch } from './utils/fetch';
-import { createLink, createRgb } from './utils/ansi.js';
+import { createLink, createRgb } from './utils/ansi';
+import PipInstaller from './components/PipInstaller';
 
 // @ts-ignore
 import lua from './wasm/lua.js';
@@ -30,6 +32,7 @@ import chibi from './wasm/chibi.js';
 import bash from './wasm/bash.js';
 // @ts-ignore
 import qjs from './wasm/qjs.js';
+import { mountPipPackages } from './utils/pipfs.js';
 
 const LANGUAGES = [
     {
@@ -98,8 +101,12 @@ function App() {
     const [messageOpen, setMessageOpen] = useState(false);
 
     const [running, setRunning] = useState(false);
-
     const [firstRun, setFirstRun] = useState(false);
+
+    const [showPip, setShowPip] = useState(false);
+    const togglePip = useCallback(() => {
+        setShowPip((v)=>!v);
+    }, [showPip]);
 
     // 设置 noindex
     useEffect(() => {
@@ -114,6 +121,14 @@ function App() {
                 meta.remove();
             }
         }
+    }, []);
+
+    const [installPrompt, setInstallPrompt] = useState<any>(null);
+    useEffect(() => {
+        window.addEventListener("beforeinstallprompt", (event) => {
+            event.preventDefault();
+            setInstallPrompt(event);
+        });
     }, []);
 
     // 复制分享链接
@@ -145,6 +160,8 @@ function App() {
         }
     }, [language, input, code]);
 
+    const ensurePythonPackages = useCallback(mountPipPackages, []);
+
     // 运行代码
     const execute = useCallback((args:any[]) => {
         let interpreter = null;
@@ -158,7 +175,7 @@ function App() {
         }
 
         if (interpreter === null) {
-            terminal?.write(`不支持运行 ${language}`)
+            terminal?.write(`Does not support running ${language}`)
         }
         setRunning(true);
 
@@ -166,6 +183,9 @@ function App() {
             let output:number[] = []
             interpreter?.({
                 arguments: [...preargs, ...args],
+                ENV: {
+                    PYTHONPATH: "/packages",
+                },
                 locateFile: (path:string, scriptDirectory:string) => {
                     if (path.endsWith(".data") || path.endsWith(".wasm")) {
                         return import.meta.env.BASE_URL + "wasm/" + path;
@@ -175,6 +195,9 @@ function App() {
                 },
                 preRun: [
                     (module:any) => {
+                        if (language === "python") {
+                            ensurePythonPackages(module, true);
+                        }
                         module.FS.writeFile(`/tmp/code`, code);
                         const encoder = new TextEncoder();
                         let bytes = encoder.encode(input);
@@ -373,7 +396,12 @@ function App() {
                         {message}
                     </Alert>
                 </Snackbar>
-                <HighlightEditor ref={editRef} language={language} sx={{position:'relative', overflow:'auto', flex:1}} text={code} onChange={(text)=>setCode(text)}/>
+                <Box sx={{flex:1, overflow:'hidden', display:'flex'}}>
+                    <Collapse orientation="horizontal" in={showPip && language === 'python'}>
+                        <PipInstaller language={language} onMessage={(message)=>terminal?.write(message)} onClose={()=>setShowPip(false)}/>
+                    </Collapse>
+                    <HighlightEditor ref={editRef} language={language} sx={{position:'relative', overflow:'auto', flex:1}} text={code} onChange={(text)=>setCode(text)}/>
+                </Box>
                 <Box sx={{position:'relative', zIndex:10}}>
                     <div ref={termDivRef} className='code fix-xterm' style={{background:'#000', height:300}}></div>
                     <Box sx={{position:'absolute', bottom:8, right:8, display:'flex', flexDirection:'column'}}>
@@ -382,31 +410,35 @@ function App() {
                         </IconButton>
                         <Collapse in={open}>
                             <Box sx={{display:'flex', flexDirection:'column', gap:1, alignSelf:'flex-end'}}>
-                                <Button size='small' variant='contained' color='inherit' aria-label='github' href='https://github.com/hubenchang0515/shift' target='_blank'><GitHubIcon/></Button>
+                                <Box sx={{display:'flex', gap:1}}>
+                                    <Button size='small' variant='contained' color='inherit' aria-label='github' href='https://github.com/hubenchang0515/shift' target='_blank' sx={{flex:1}}><GitHubIcon/></Button>
+                                    { installPrompt && <Button size='small' variant='contained' color='inherit' disabled={!navigator?.clipboard?.writeText} onClick={()=>{(installPrompt as any).prompt()}}><InstallDesktopIcon/></Button> }
+                                </Box>
+                                {language === 'python' ? <Button size='small' variant='contained' color='inherit' disabled={!navigator?.clipboard?.writeText} onClick={togglePip}>PIP</Button> : <></>}
                                 <Paper>
-                                <FormControl fullWidth variant="standard">
-                                    <Select
-                                        value={language}
-                                        onChange={(ev)=>setLanguage(ev.target.value)}
-                                        sx={{paddingX:1, minWidth:'8em'}}
-                                        inputProps={{
-                                            "aria-label": "language"
-                                        }}
-                                    >
-                                        {
-                                            LANGUAGES.map((item, index) => {
-                                                return <MenuItem key={index} value={item.name}>{item.label}</MenuItem>
-                                            })
-                                        }
+                                    <FormControl fullWidth variant="standard">
+                                        <Select
+                                            value={language}
+                                            onChange={(ev)=>setLanguage(ev.target.value)}
+                                            sx={{paddingX:1, minWidth:'8em'}}
+                                            inputProps={{
+                                                "aria-label": "language"
+                                            }}
+                                        >
+                                            {
+                                                LANGUAGES.map((item, index) => {
+                                                    return <MenuItem key={index} value={item.name}>{item.label}</MenuItem>
+                                                })
+                                            }
 
-                                        {
-                                            LANGUAGES.some(item=>item.name===language) ? <></> :
-                                            <MenuItem key={language} value={language}>{language}</MenuItem>
-                                        }
-                                    </Select>
-                                </FormControl>
+                                            {
+                                                LANGUAGES.some(item=>item.name===language) ? <></> :
+                                                <MenuItem key={language} value={language}>{language}</MenuItem>
+                                            }
+                                        </Select>
+                                    </FormControl>
                                 </Paper>
-                                <Button variant='contained' color='inherit' disabled={!navigator?.clipboard?.writeText} onClick={share}>SHARE</Button>
+                                <Button size='small' variant='contained' color='inherit' disabled={!navigator?.clipboard?.writeText} onClick={share}>SHARE</Button>
                                 <Tooltip title="Ctrl + L" arrow placement='left'>
                                     <Button size='small' variant='contained' color='secondary' onClick={()=>{terminal?.reset();}}>CLEAR</Button>
                                 </Tooltip>

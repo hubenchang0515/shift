@@ -114,7 +114,7 @@ export function HighlightEditor(props:HighlightEditorProps, ref?:Ref<HTMLDivElem
             sx={props.sx}
         >
             <Box sx={{ width: '100%', height:'100%', overflow:'auto', display:'flex'}}>
-                <Box ref={rowsRef} className='code-font' sx={{...commonStyle, height:'100%',color:'gray', borderRight:'1px solid gray', userSelect:'none', minWidth:'calc(2.25em + 24px)', fontSize:16, overflow:'hidden'}} textAlign='right'>
+                <Box ref={rowsRef} className='code-font' sx={{...commonStyle, height:'100%',color:'gray', borderRight: '1px solid rgba(255,255,255,0.12)', userSelect:'none', minWidth:'calc(2.25em + 24px)', fontSize:16, overflow:'hidden'}} textAlign='right'>
                     {
                         Array(rows||1).fill(0).map((_, i) => <span key={i}>{i+1}<br/></span>)
                     }

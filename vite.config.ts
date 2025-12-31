@@ -31,15 +31,15 @@ export default defineConfig({
         ],
       },
       devOptions: {
-        enabled: true,
+        enabled: false,
       },
       workbox: {
         skipWaiting: true,
-        maximumFileSizeToCacheInBytes: 32 * 1024 ** 2, // 32 MB or set to something else
+        maximumFileSizeToCacheInBytes: 32 * 1024 ** 2,
         globPatterns: ['**/*.{html,js,css}'],
         runtimeCaching: [
           {
-            urlPattern: ()=>true,
+            urlPattern: ({ url }) => url.pathname.endsWith('.wasm') || url.pathname.endsWith('.data'),
             handler: "CacheFirst",
             options: {
               cacheName: 'xplanc-cdn-cache',
