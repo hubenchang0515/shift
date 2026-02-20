@@ -39,7 +39,7 @@ export default defineConfig({
         globPatterns: ['**/*.{html,js,css}'],
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => url.pathname.endsWith('.wasm') || url.pathname.endsWith('.data'),
+            urlPattern: ({ url }) => ['.wasm', '.data', '.ttf'].some(ext => url.pathname.endsWith(ext)),
             handler: "CacheFirst",
             options: {
               cacheName: 'xplanc-cdn-cache',
