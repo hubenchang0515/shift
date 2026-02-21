@@ -411,8 +411,8 @@ function App() {
                         <Collapse in={open}>
                             <Box sx={{display:'flex', flexDirection:'column', gap:1, alignSelf:'flex-end'}}>
                                 <Box sx={{display:'flex', gap:1}}>
-                                    <Button size='small' variant='contained' color='inherit' aria-label='github' href='https://github.com/hubenchang0515/shift' target='_blank' sx={{flex:1}}><GitHubIcon/></Button>
-                                    { installPrompt && <Button size='small' variant='contained' color='inherit' disabled={!navigator?.clipboard?.writeText} onClick={()=>{(installPrompt as any).prompt()}}><InstallDesktopIcon/></Button> }
+                                    <Button size='small' variant='contained' color='inherit' aria-label='github' href='https://github.com/hubenchang0515/shift' target='_blank' sx={{flex:1}}><GitHubIcon fontSize='small'/></Button>
+                                    { installPrompt && <Button size='small' variant='contained' color='inherit' disabled={!navigator?.clipboard?.writeText} onClick={()=>{(installPrompt as any).prompt()}}><InstallDesktopIcon fontSize='small'/></Button> }
                                 </Box>
                                 {language === 'python' ? <Button size='small' variant='contained' color='inherit' disabled={!navigator?.clipboard?.writeText} onClick={togglePip}>PIP</Button> : <></>}
                                 <Paper>

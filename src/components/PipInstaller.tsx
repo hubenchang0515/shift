@@ -262,7 +262,7 @@ export default function PipInstaller(props:PipInstallerProps) {
                     </Typography>
                     <Box sx={{display:'flex', alignItems:'center', justifyContent:'space-between', mt:1}}>
                         <Typography variant="caption" color="text.secondary">
-                            Installed ()
+                            Installed ({pipInstalled.length})
                         </Typography>
                         <Tooltip title="Refresh" arrow placement="right">
                             <span>
